@@ -177,16 +177,19 @@ function SETUP_EVENT(myAddon, functionName, myFunctionName)
 	if _G['ADDONS']['EVENTS'][functionName .. "_OLD"] == nil then
 		_G['ADDONS']['EVENTS'][functionName .. "_OLD"] =  _G[functionName];
 	end
-
+	
 	local hookedFuncString = [[_G[']]..functionName..[['] = function(...)
+		local function pack2(...) return {n=select('#', ...), ...} end
 		local thisFuncName = "]]..functionName..[[";
-		pcall(_G['ADDONS']['EVENTS'][thisFuncName .. '_OLD'], ...);
+		local result = pack2(pcall(_G['ADDONS']['EVENTS'][thisFuncName .. '_OLD'], ...));
 		_G['ADDONS']['EVENTS']['ARGS'][thisFuncName] = {...};
 		imcAddOn.BroadMsg(thisFuncName);
+		return unpack(result, i, result.n);
 	end
 	]];
-
+	
 	pcall(loadstring(hookedFuncString));
+
 	myAddon:RegisterMsg(functionName, myFunctionName);
 end
 
