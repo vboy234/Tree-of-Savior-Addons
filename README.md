@@ -1,3 +1,9 @@
+# \#Sellout
+
+Not required by any means, but feel free to donate if you want!
+
+[Donate!](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6JBF88ZAUCD34)
+
 # If your load addon button gets stuck on the screen, your zip program probably removed or corrupted the unicode character in the ipf filename. Make sure the experience card calculator ipf is named this after extracting:
 
 #### ☃expcardcalculator.ipf
