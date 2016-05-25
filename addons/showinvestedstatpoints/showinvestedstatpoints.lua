@@ -1,13 +1,17 @@
+function SHOWINVESTEDSTATPOINTS_ON_INIT(addon, frame)
+	SETUP_HOOK(STATUS_INFO_HOOKED, "STATUS_INFO");
+end
+
 function STATUS_INFO_HOOKED(frame)
     _G["STATUS_INFO_OLD"](frame);
-    
+
     local Status_gboxctrl = frame:GetChild('statusGbox');
     local Status_internal_gboxctrl = GET_CHILD(Status_gboxctrl,'internalstatusBox');
-    
+
     local pc = GetMyPCObject();
-    
+
     local isStatusSection = true;
-    
+
     local stats = {};
     stats["statPC"] = {};           -- this is how many points you've allocated to it
 
@@ -20,27 +24,27 @@ function STATUS_INFO_HOOKED(frame)
         -- if we can't find the last entry in the status box, pick a high arbitrary number
         y = 1500; -- should be far enough down to not obstruct other values
     end
-    
+
     -- for each type of STAT (excludes hidden stat LUCK)
     for i = 0 , STAT_COUNT - 1 do
         local statStr = GetStatTypeStr(i);
         stats["statPC"][statStr] = GET_STAT_PROPERTY_FROM_PC("STAT", statStr, pc);
-        
+
         -- display the points we have allocated on the end of the list
         y = ADD_TO_STATUS(Status_internal_gboxctrl, statStr, stats["statPC"][statStr], y, isStatusSection);
     end
-    
-     --Companion-related stats    
+
+     --Companion-related stats
     local sharedStats = {"MountDEF", "MountDR", "MountMHP"};
     local petInfo = session.pet.GetSummonedPet();
     local companion = control.GetMyCompanionActor();
     local ridingAttributeCheck = GetAbility(pc, "CompanionRide");
-    
+
     isStatusSection = false;
-    
+
     if ridingAttributeCheck ~= nil then
       if companion ~= nil then
-          if petInfo ~= nil then 
+          if petInfo ~= nil then
               local obj = GetIES(petInfo:GetObject());
               --Use 3 elements for now as shared PATK, MATK (and possibly MSPD - this one always
               --returns 0) rely on pet equipment
@@ -48,34 +52,30 @@ function STATUS_INFO_HOOKED(frame)
                   local sharedStatValue = sharedStats[j];
                   y = ADD_TO_STATUS(Status_internal_gboxctrl, sharedStatValue, obj[sharedStatValue], y, isStatusSection);
               end
-          end 
-      end 
+          end
+      end
     end
-    
+
     Status_internal_gboxctrl:SetScrollPos(0);
     frame:Invalidate();
-    
+
 end
 
 function ADD_TO_STATUS(gboxctrl, attributeName, value, y, isMainSection)
     local controlSet = gboxctrl:CreateOrGetControlSet('status_stat', attributeName, 0, y);
-    
+
     tolua.cast(controlSet, "ui::CControlSet");
     local title = GET_CHILD(controlSet, "title", "ui::CRichText");
-    local text = TEXT_CONTROL_FACTORY(attributeName, isMainSection); 
-    
-    title:SetText(text);  
-    
+    local text = TEXT_CONTROL_FACTORY(attributeName, isMainSection);
+
+    title:SetText(text);
+
     local stat = GET_CHILD(controlSet, "stat", "ui::CRichText");
     title:SetUseOrifaceRect(true);
     stat:SetUseOrifaceRect(true);
     stat:SetText(value);
 
     controlSet:Resize(controlSet:GetWidth(), stat:GetHeight());
-    
+
     return y + controlSet:GetHeight();
 end
-
-SETUP_HOOK(STATUS_INFO_HOOKED, "STATUS_INFO");
-
-ui.SysMsg("Show Invested Stat Points loaded!");
