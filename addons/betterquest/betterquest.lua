@@ -1,5 +1,11 @@
 local filterEnabled = true;
 
+function BETTERQUEST_ON_INIT()
+	BETTERQUEST_CREATE_FILTER_CHECKBOX();
+	SETUP_HOOK(BETTERQUEST_POSSIBLE_UI_OPEN_CHECK, "SCR_POSSIBLE_UI_OPEN_CHECK");
+	SETUP_HOOK(BETTERQUEST_UPDATE_ALLQUEST, "UPDATE_ALLQUEST");
+end
+
 function BETTERQUEST_CREATE_FILTER_CHECKBOX()
 	local frame = ui.GetFrame('quest');
 	local ctrl = frame:CreateOrGetControl('checkbox', 'BETTERQUEST_FILTER', 0, 0, 150, 30);
@@ -11,12 +17,6 @@ function BETTERQUEST_CREATE_FILTER_CHECKBOX()
 	ctrl:SetOverSound('button_over');
 	ctrl:SetEventScript(ui.LBUTTONUP, 'BETTERQUEST_TOGGLE_FILTER');
 	ctrl:SetCheck(filterEnabled == true and 0 or 1);
-end
-
-function BETTERQUEST_ON_INIT()
-	BETTERQUEST_CREATE_FILTER_CHECKBOX();
-	SETUP_HOOK(BETTERQUEST_POSSIBLE_UI_OPEN_CHECK, "SCR_POSSIBLE_UI_OPEN_CHECK");
-	SETUP_HOOK(BETTERQUEST_UPDATE_ALLQUEST, "UPDATE_ALLQUEST");
 end
 
 local refreshQuestFrame = function()
@@ -151,7 +151,7 @@ function updateQuestName()
 
 	local clsList, cnt = GetClassList("QuestProgressCheck");
 	for i = 0, cnt -1 do
-		
+
 		local questIES = GetClassByIndexFromList(clsList, i);
 		local ctrlName = "_Q_" .. questIES.ClassID;
 
@@ -199,6 +199,3 @@ function QUEST_ON_INIT_HOOKED(addon, frame)
 end
 
 SETUP_HOOK(QUEST_ON_INIT_HOOKED, "QUEST_ON_INIT");
-
-BETTERQUEST_ON_INIT();
-ui.SysMsg("Better Quest loaded!");
