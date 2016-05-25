@@ -1,4 +1,4 @@
-function EXCRULONUTILITY_ON_INIT(addon, frame)
+function EXCRUTIL_ON_INIT(addon, frame)
 end
 
 function ADD_THOUSANDS_SEPARATOR(amount)
