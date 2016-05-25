@@ -7,6 +7,13 @@ local settings = {
 	showTargetSize = true;
 };
 
+function MONSTERFRAMES_ON_INIT(addon, frame)
+	SETUP_HOOK(TGTINFO_TARGET_SET_HOOKED, "TGTINFO_TARGET_SET");
+	SETUP_HOOK(TARGETINFO_ON_MSG_HOOKED, "TARGETINFO_ON_MSG");
+	SETUP_HOOK(TARGETINFOTOBOSS_TARGET_SET_HOOKED, "TARGETINFOTOBOSS_TARGET_SET");
+	SETUP_HOOK(TARGETINFOTOBOSS_ON_MSG_HOOKED, "TARGETINFOTOBOSS_ON_MSG");
+end
+
 function SHOW_PROPERTY_WINDOW(frame, monCls, targetInfoProperty, monsterPropertyIcon, x, y, spacingX, spacingY)
 	local propertyType = frame:CreateOrGetControl("picture", monsterPropertyIcon .. "_icon", 0, 0, 100, 40);
 	tolua.cast(propertyType, "ui::CPicture");
@@ -232,10 +239,3 @@ function TARGETINFOTOBOSS_ON_MSG_HOOKED(frame, msg, argStr, argNum)
 		bossHP:ShowWindow(1);
 	end
 end
-
-SETUP_HOOK(TGTINFO_TARGET_SET_HOOKED, "TGTINFO_TARGET_SET");
-SETUP_HOOK(TARGETINFO_ON_MSG_HOOKED, "TARGETINFO_ON_MSG");
-SETUP_HOOK(TARGETINFOTOBOSS_TARGET_SET_HOOKED, "TARGETINFOTOBOSS_TARGET_SET");
-SETUP_HOOK(TARGETINFOTOBOSS_ON_MSG_HOOKED, "TARGETINFOTOBOSS_ON_MSG");
-
-ui.SysMsg("Monster Frames loaded!");
