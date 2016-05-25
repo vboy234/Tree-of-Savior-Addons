@@ -7,6 +7,14 @@ local settings = {
 	showTimeTilLevel = true;
 };
 
+function EXPVIEWER_ON_INIT(addon, frame)
+	SETUP_HOOK(CHARBASEINFO_ON_MSG_HOOKED, "CHARBASEINFO_ON_MSG");
+	SETUP_HOOK(ON_JOB_EXP_UPDATE_HOOKED, "ON_JOB_EXP_UPDATE");
+	SETUP_HOOK(HEADSUPDISPLAY_ON_MSG_HOOKED, "HEADSUPDISPLAY_ON_MSG");
+
+	INIT();
+end
+
 --[[START EXPERIENCE DATA]]
 local ExperienceData = {}
 ExperienceData.__index = ExperienceData
@@ -512,12 +520,3 @@ function SAVE_POSITION_TO_FILE(xPosition, yPosition)
 	file:flush();
 	file:close();
 end
-
---LOAD HOOKS - this must go at the end of the script so that the methods are defined
-SETUP_HOOK(CHARBASEINFO_ON_MSG_HOOKED, "CHARBASEINFO_ON_MSG");
-SETUP_HOOK(ON_JOB_EXP_UPDATE_HOOKED, "ON_JOB_EXP_UPDATE");
-SETUP_HOOK(HEADSUPDISPLAY_ON_MSG_HOOKED, "HEADSUPDISPLAY_ON_MSG");
-
-INIT();
-
-ui.SysMsg("Experience Viewer loaded!");
