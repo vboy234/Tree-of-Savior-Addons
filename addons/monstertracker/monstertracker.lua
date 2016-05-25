@@ -5,6 +5,10 @@ _G["MONSTER_TRACKER"]["settings"] = {
 	showNoticeIfComplete = true;
 };
 
+function MONSTERTRACKER_ON_INIT(addon, frame)
+	addon:RegisterMsg("FPS_UPDATE", "FPS_ON_MSG_HOOKED");
+end
+
 local MonsterTrackData = {}
 MonsterTrackData.__index = MonsterTrackData
 
@@ -28,8 +32,6 @@ function MonsterTrackData.new()
 end
 
 function FPS_ON_MSG_HOOKED(frame, msg, argStr, argNum)
-	_G["FPS_ON_MSG_OLD"](frame, msg, argStr, argNum);
-
 	local result = SCR_GET_ZONE_FACTION_OBJECT(session.GetMapName(), "Monster", "Normal/Material/Elite/Boss", 120000);
 
 	for k,v in pairs(result) do
@@ -57,7 +59,7 @@ function FPS_ON_MSG_HOOKED(frame, msg, argStr, argNum)
 		end
 
 		if monsterTrackData.killCount ~= monsterTrackData.previousKillCount then
-			local killNoticeFrame = ui.GetFrame("killnotice");
+			local killNoticeFrame = ui.GetFrame("monstertracker");
 			killNoticeFrame:SetGravity(ui.RIGHT, ui.BOTTOM);
 
 			local monsterImage = GET_CHILD(killNoticeFrame, "monsterImage");
@@ -100,7 +102,3 @@ function SHOULD_SHOW_NOTICE(monsterTrackData)
 		and not monsterTrackData.isFirstPass
 		or (monsterTrackData.killCount > monsterTrackData.killsRequired and _G["MONSTER_TRACKER"]["settings"].showNoticeIfComplete);
 end
-
-SETUP_HOOK(FPS_ON_MSG_HOOKED, "FPS_ON_MSG");
-
-ui.SysMsg("Monster Tracker loaded!");
