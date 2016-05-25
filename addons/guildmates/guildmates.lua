@@ -1,3 +1,10 @@
+function GUILDMATES_ON_INIT(addon, frame)
+	SETUP_HOOK(POPUP_GUILD_MEMBER_HOOKED, "POPUP_GUILD_MEMBER");
+	SETUP_HOOK(UPDATE_GUILDINFO_HOOKED, "UPDATE_GUILDINFO");
+	SETUP_HOOK(OPEN_PARTY_MEMBER_INFO_HOOKED, "OPEN_PARTY_MEMBER_INFO");
+	SETUP_HOOK(REQUEST_LIKE_STATE_HOOKED, "REQUEST_LIKE_STATE");
+end
+
 function POPUP_GUILD_MEMBER_HOOKED(parent, ctrl)
 	local aid = parent:GetUserValue("AID");
 	if aid == "None" then
@@ -28,6 +35,7 @@ function POPUP_GUILD_MEMBER_HOOKED(parent, ctrl)
 		end
 	end
 
+	ui.AddContextMenuItem(context, "Character Info", string.format("OPEN_PARTY_MEMBER_INFO('%s')", name));
 	ui.AddContextMenuItem(context, ScpArgMsg("PARTY_INVITE"), string.format("PARTY_INVITE(\"%s\")", name));
 	ui.AddContextMenuItem(context, ScpArgMsg("ReqAddFriend"), string.format("friends.RequestRegister('%s')", name));
 	ui.AddContextMenuItem(context, ScpArgMsg("WHISPER"), string.format("ui.WhisperTo('%s')", name));
@@ -140,10 +148,18 @@ function UPDATE_GUILDINFO_HOOKED(frame)
 	GUILD_UPDATE_TOWERINFO(frame, pcparty, partyObj);
 
 	UPDATE_GUILD_EVENT_INFO(frame, pcparty, partyObj);
-
 end
 
-SETUP_HOOK(POPUP_GUILD_MEMBER_HOOKED, "POPUP_GUILD_MEMBER");
-SETUP_HOOK(UPDATE_GUILDINFO_HOOKED, "UPDATE_GUILDINFO");
+function OPEN_PARTY_MEMBER_INFO_HOOKED(targetName)
+	pcCompareFirstPass = true;
+	party.ReqMemberDetailInfo(targetName);
+end
 
-ui.SysMsg("Guildmates loaded!");
+function REQUEST_LIKE_STATE_HOOKED(familyName)
+	if pcCompareFirstPass == true then
+		pcCompareFirstPass = false;
+		return;
+	end
+
+	_G['REQUEST_LIKE_STATE_OLD'](familyName);
+end
