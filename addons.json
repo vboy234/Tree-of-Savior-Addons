@@ -10,5 +10,17 @@
 		"tags" : [
 			"channel"
 		]
+	},
+	{
+		"name" : "Map Fog Viewer",
+		"file" : "mapfogviewer",
+		"extension" : "ipf",
+		"releaseTag" : "brandish",
+		"fileVersion" : "v1.0.0",
+		"unicode" : "⛄",
+		"description" : "Displays the fog on the map as red tiles instead of the hard to see default fog. Makes exploration really easy!",
+		"tags" : [
+			"channel"
+		]
 	}
 ]
