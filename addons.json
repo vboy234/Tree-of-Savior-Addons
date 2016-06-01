@@ -1,5 +1,15 @@
 [
 	{
+		"name" : "Channel Surfer",
+		"file" : "channelsurfer",
+		"extension" : "ipf",
+		"version" : "v1.0.0",
+		"description" : "Removes the confirmation box when changing channels, displays more channels in the dropdown box, and adds buttons to change channels easily.",
+		"tags" : [
+			"channel"
+		]
+	},
+	{
 		"name" : "Experience Viewer",
 		"file" : "experienceviewer",
 		"extension" : "ipf",
