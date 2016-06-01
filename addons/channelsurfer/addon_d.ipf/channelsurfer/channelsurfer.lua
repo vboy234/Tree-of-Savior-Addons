@@ -1,9 +1,14 @@
+local acutil = require("acutil");
+
 local settings = {
 	maxNumberOfChannelsToShow = 30;
 };
 
 function CHANNELSURFER_ON_INIT(addon, frame)
 	addon:RegisterMsg('GAME_START', 'CHSURF_CREATE_BUTTONS');
+
+	acutil.setupHook(SELECT_ZONE_MOVE_CHANNEL_HOOKED, "SELECT_ZONE_MOVE_CHANNEL");
+	acutil.setupHook(POPUP_CHANNEL_LIST_HOOKED, "POPUP_CHANNEL_LIST");
 end
 
 function SELECT_ZONE_MOVE_CHANNEL_HOOKED(index, channelID)
@@ -90,6 +95,3 @@ function CHSURF_CREATE_BUTTONS()
 	prevbutton:SetClickSound('button_click_big');
 	prevbutton:SetOverSound('button_over');
 end
-
-SETUP_HOOK(SELECT_ZONE_MOVE_CHANNEL_HOOKED, "SELECT_ZONE_MOVE_CHANNEL");
-SETUP_HOOK(POPUP_CHANNEL_LIST_HOOKED, "POPUP_CHANNEL_LIST");
