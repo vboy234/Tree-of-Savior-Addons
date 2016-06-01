@@ -58,5 +58,20 @@
 			"race",
 			"weakness"
 		]
+	},
+	{
+		"name" : "Monster Tracker",
+		"file" : "monstertracker",
+		"extension" : "ipf",
+		"releaseTag" : "brandish",
+		"fileVersion" : "v1.0.0",
+		"unicode" : "⛄",
+		"description" : "Keeps track of the monsters you kill and tells you when you've killed the proper amount.",
+		"tags" : [
+			"ui",
+			"journal",
+			"kill count",
+			"wings of vibora"
+		]
 	}
 ]
