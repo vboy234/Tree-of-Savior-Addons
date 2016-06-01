@@ -37,5 +37,26 @@
 			"fog",
 			"exploration"
 		]
+	},
+	{
+		"name" : "Monster Frames",
+		"file" : "monsterframes",
+		"extension" : "ipf",
+		"releaseTag" : "brandish",
+		"fileVersion" : "v1.0.0",
+		"unicode" : "⛄",
+		"description" : "Displays detailed monster information on the monster frames including HP, armor, element, race, size, weakness, and kill count.",
+		"tags" : [
+			"ui",
+			"frames",
+			"monster",
+			"hp",
+			"armor",
+			"element",
+			"attribute",
+			"size",
+			"race",
+			"weakness"
+		]
 	}
 ]

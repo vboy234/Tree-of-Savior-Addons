@@ -1,3 +1,5 @@
+local acutil = require("acutil");
+
 local settings = {
 	showRaceType = true;
 	showAttribute = true;
@@ -8,10 +10,10 @@ local settings = {
 };
 
 function MONSTERFRAMES_ON_INIT(addon, frame)
-	SETUP_HOOK(TGTINFO_TARGET_SET_HOOKED, "TGTINFO_TARGET_SET");
-	SETUP_HOOK(TARGETINFO_ON_MSG_HOOKED, "TARGETINFO_ON_MSG");
-	SETUP_HOOK(TARGETINFOTOBOSS_TARGET_SET_HOOKED, "TARGETINFOTOBOSS_TARGET_SET");
-	SETUP_HOOK(TARGETINFOTOBOSS_ON_MSG_HOOKED, "TARGETINFOTOBOSS_ON_MSG");
+	acutil.setupHook(TGTINFO_TARGET_SET_HOOKED, "TGTINFO_TARGET_SET");
+	acutil.setupHook(TARGETINFO_ON_MSG_HOOKED, "TARGETINFO_ON_MSG");
+	acutil.setupHook(TARGETINFOTOBOSS_TARGET_SET_HOOKED, "TARGETINFOTOBOSS_TARGET_SET");
+	acutil.setupHook(TARGETINFOTOBOSS_ON_MSG_HOOKED, "TARGETINFOTOBOSS_ON_MSG");
 end
 
 function SHOW_PROPERTY_WINDOW(frame, monCls, targetInfoProperty, monsterPropertyIcon, x, y, spacingX, spacingY)
@@ -37,11 +39,12 @@ function TGTINFO_TARGET_SET_HOOKED(frame, msg, argStr, argNum)
 	end
 
 	local stat = info.GetStat(session.GetTargetHandle());
+
 	if stat == nil then
 		return;
 	end
 
-	if nil == targetinfo then
+	if targetinfo == nil then
 		return;
 	end
 
@@ -60,12 +63,13 @@ function TGTINFO_TARGET_SET_HOOKED(frame, msg, argStr, argNum)
 	else
 		numhp = frame:CreateOrGetControl("richtext", "numhp", -17, 0, 176, 115);
 	end
+
 	if numhp ~= nil then
 		tolua.cast(numhp, "ui::CRichText");
 		numhp:ShowWindow(1);
 		numhp:SetGravity(ui.CENTER_HORZ, ui.TOP);
 		numhp:SetTextAlign("center", "center");
-		numhp:SetText(ADD_THOUSANDS_SEPARATOR(stat.HP) .. "/" .. ADD_THOUSANDS_SEPARATOR(stat.maxHP));
+		numhp:SetText(GetCommaedText(stat.HP) .. "/" .. GetCommaedText(stat.maxHP));
 		numhp:SetFontName("white_16_ol");
 	end
 
@@ -125,7 +129,7 @@ function TGTINFO_TARGET_SET_HOOKED(frame, msg, argStr, argNum)
 		if targetinfo.size ~= nil then
 			killCountText:SetOffset(0, 0);
 			killCountText:SetFontName("white_16_ol");
-			killCountText:SetText(ADD_THOUSANDS_SEPARATOR(killCount) .. " / " .. ADD_THOUSANDS_SEPARATOR(killsRequired));
+			killCountText:SetText(GetCommaedText(killCount) .. " / " .. GetCommaedText(killsRequired));
 			killCountText:ShowWindow(1);
 		else
 			killCountText:ShowWindow(0);
@@ -158,7 +162,7 @@ function TARGETINFO_ON_MSG_HOOKED(frame, msg, argStr, argNum)
 		numhp:ShowWindow(1);
 		numhp:SetGravity(ui.CENTER_HORZ, ui.TOP);
 		numhp:SetTextAlign("center", "center");
-		numhp:SetText(ADD_THOUSANDS_SEPARATOR(stat.HP) .. "/" .. ADD_THOUSANDS_SEPARATOR(stat.maxHP));
+		numhp:SetText(GetCommaedText(stat.HP) .. "/" .. GetCommaedText(stat.maxHP));
 		numhp:SetFontName("white_16_ol");
 	end
 end
@@ -187,7 +191,7 @@ function TARGETINFOTOBOSS_TARGET_SET_HOOKED(frame, msg, argStr, argNum)
 	tolua.cast(bossHP, "ui::CRichText");
 	bossHP:SetGravity(ui.CENTER_HORZ, ui.TOP);
 	bossHP:SetTextAlign("center", "center");
-	bossHP:SetText(ADD_THOUSANDS_SEPARATOR(stat.HP) .. " / " .. ADD_THOUSANDS_SEPARATOR(stat.maxHP));
+	bossHP:SetText(GetCommaedText(stat.HP) .. " / " .. GetCommaedText(stat.maxHP));
 	bossHP:SetFontName("white_16_ol");
 	bossHP:ShowWindow(1);
 
@@ -234,7 +238,7 @@ function TARGETINFOTOBOSS_ON_MSG_HOOKED(frame, msg, argStr, argNum)
 		tolua.cast(bossHP, "ui::CRichText");
 		bossHP:SetGravity(ui.CENTER_HORZ, ui.TOP);
 		bossHP:SetTextAlign("center", "center");
-		bossHP:SetText(ADD_THOUSANDS_SEPARATOR(stat.HP) .. " / " .. ADD_THOUSANDS_SEPARATOR(stat.maxHP));
+		bossHP:SetText(GetCommaedText(stat.HP) .. " / " .. GetCommaedText(stat.maxHP));
 		bossHP:SetFontName("white_16_ol");
 		bossHP:ShowWindow(1);
 	end
