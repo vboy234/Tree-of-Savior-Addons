@@ -12,6 +12,18 @@
 		]
 	},
 	{
+		"name" : "Guildmates",
+		"file" : "guildmates",
+		"extension" : "ipf",
+		"releaseTag" : "brandish",
+		"fileVersion" : "v1.0.0",
+		"unicode" : "⛄",
+		"description" : "Enhances the guild window by displaying a player's level, showing their character name, and adding more context menu options such as party request and character info.",
+		"tags" : [
+			"guild"
+		]
+	},
+	{
 		"name" : "Map Fog Viewer",
 		"file" : "mapfogviewer",
 		"extension" : "ipf",
@@ -20,7 +32,10 @@
 		"unicode" : "⛄",
 		"description" : "Displays the fog on the map as red tiles instead of the hard to see default fog. Makes exploration really easy!",
 		"tags" : [
-			"channel"
+			"map",
+			"minimap",
+			"fog",
+			"exploration"
 		]
 	}
 ]
