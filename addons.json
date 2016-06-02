@@ -55,7 +55,7 @@
 	},
 	{
 		"name" : "Experience Viewer",
-		"file" : "experienceviewer",
+		"file" : "expviewer",
 		"extension" : "ipf",
 		"fileVersion" : "v1.0.0",
 		"releaseTag" : "v1.0.0",
