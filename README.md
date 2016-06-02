@@ -1,16 +1,4 @@
-# \#Sellout
-
-Not required by any means, but feel free to donate if you want!
-
-[Donate!](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6JBF88ZAUCD34)
-
-# If your load addon button gets stuck on the screen, your zip program probably removed or corrupted the unicode character in the ipf filename. Make sure the experience card calculator ipf is named this after extracting:
-
-#### ☃expcardcalculator.ipf
-
-This is just due to the patcher not checking for unicode characters in filenames when it deletes every other file not on their list. Hopefully I can find another way to load stuff so we don't even need to deal with this workaround anymore. May just go back to packing stuff in SumAni.ipf or something.
-
-# Tree of Savior Lua Mods
+# Tree of Savior Addons
 
 ### Features
 
@@ -25,63 +13,15 @@ This is just due to the patcher not checking for unicode characters in filenames
 
 ![Zoomy](http://i.imgur.com/brIjyQ4.jpg)
 
-# Download
+# Download / Installation
 
-[Get the latest release here](https://github.com/Excrulon/Tree-of-Savior-Lua-Mods/releases)
+All addons should be installed via the [Addon Manager](https://github.com/Excrulon/Tree-of-Savior-Addon-Manager). No more loaders needed. This addon manager should handle everything real easily.
 
-# Installation
+# Donate
 
- Extract the zip to your Tree of Savior directory (C:\Program Files (x86)\Steam\steamapps\common\TreeOfSavior for me). Say yes to overwrite any files. An addons folder should be in the root directory and SumAni.ipf should be in the data folder. Your directories should look something like this:
+Not required by any means, but feel free to donate if you want!
 
-![File Structure](http://i.imgur.com/wme1kOc.png)
-
-Start game and login to character.
-
-Press the "Load Addons" button. It should disappear.
-
-![Load Addons](http://i.imgur.com/8ujqiMq.jpg)
-
-Play!
- 
-![Play!](http://i.imgur.com/z8xXMvA.jpg)
-
-Be sure to press the "R" button at the topright of the experience viewer window in order to save its position after moving it. It will move back if you don't.
-
-# Uninstall
-
-Delete the addons folder and data\SumAni.ipf. The patcher will redownload SumAni.ipf.
-
-# Usage
-
-To configure which columns are visible on the expviewer, open addons/expviewer/expviewer.lua with any text editor once you have installed it to the right place. You will see these settings at the top of the file:
-
-```
-settings = {
-	showCurrentRequiredExperience = true;
-	showCurrentPercent = true;
-	showLastGainedExperience = true;
-	showKillsTilNextLevel = true;
-	showExperiencePerHour = true;
-	showTimeTilLevel = true;
-};
-```
-
-Set the values to either true or false depending on what you want.
-
-Here's an example that only displays current/required experience, kills til next level, and experience/hour with map viewer enabled:
-
-```
-settings = {
-	showCurrentRequiredExperience = true;
-	showCurrentPercent = false;
-	showLastGainedExperience = false;
-	showKillsTilNextLevel = true;
-	showExperiencePerHour = true;
-	showTimeTilLevel = false;
-};
-```
-
-To remove an addon, delete or comment out the dofile line in addons/addonloader.lua.
+[Donate!](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6JBF88ZAUCD34)
 
 # Roadmap
 
