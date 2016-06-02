@@ -19,7 +19,7 @@
 
 All addons should be installed via the [Addon Manager](https://github.com/Excrulon/Tree-of-Savior-Addon-Manager). No more loaders needed. This addon manager should handle everything real easily.
 
-If you have previous addons installed, it's best to delete them all and start from scratch using this app. This includes the `addons` folder and all of the previous ipfs. No more loaders needed.
+If you have previous addons installed, it's best to delete them all and start from scratch using this app. This includes the `addons` folder and all of the previous ipfs (including SumAni.ipf!). No more loaders needed.
 
 # Donate
 
