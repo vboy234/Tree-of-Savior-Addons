@@ -1,5 +1,18 @@
 [
 	{
+		"name" : "Better Quest",
+		"file" : "betterquest",
+		"extension" : "ipf",
+		"releaseTag" : "brandish",
+		"fileVersion" : "v1.0.0",
+		"unicode" : "⛄",
+		"description" : "Adds a checkbox in the quest window to display all eligible quests.",
+		"tags" : [
+			"ui",
+			"quest"
+		]
+	},
+	{
 		"name" : "Channel Surfer",
 		"file" : "channelsurfer",
 		"extension" : "ipf",

@@ -1,9 +1,12 @@
+local acutil = require("acutil");
+
 local filterEnabled = true;
 
 function BETTERQUEST_ON_INIT()
 	BETTERQUEST_CREATE_FILTER_CHECKBOX();
-	SETUP_HOOK(BETTERQUEST_POSSIBLE_UI_OPEN_CHECK, "SCR_POSSIBLE_UI_OPEN_CHECK");
-	SETUP_HOOK(BETTERQUEST_UPDATE_ALLQUEST, "UPDATE_ALLQUEST");
+	acutil.setupHook(BETTERQUEST_POSSIBLE_UI_OPEN_CHECK, "SCR_POSSIBLE_UI_OPEN_CHECK");
+	acutil.setupHook(BETTERQUEST_UPDATE_ALLQUEST, "UPDATE_ALLQUEST");
+	acutil.setupHook(QUEST_ON_INIT_HOOKED, "QUEST_ON_INIT");
 end
 
 function BETTERQUEST_CREATE_FILTER_CHECKBOX()
@@ -145,7 +148,6 @@ function BETTERQUEST_UPDATE_ALLQUEST(frame, msg, isNew, questID, isNewQuest)
 	frame:Invalidate();
 end
 function updateQuestName()
-
 	local frame = ui.GetFrame('quest');
 	local questGbox = frame:GetChild('questGbox');
 
@@ -197,5 +199,3 @@ function QUEST_ON_INIT_HOOKED(addon, frame)
 	_G["QUEST_ON_INIT_OLD"](addon, frame);
 	BETTERQUEST_CREATE_FILTER_CHECKBOX();
 end
-
-SETUP_HOOK(QUEST_ON_INIT_HOOKED, "QUEST_ON_INIT");
