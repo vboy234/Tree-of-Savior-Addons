@@ -1,4 +1,7 @@
+local acutil = require("acutil");
+
 function HIDEMAXEDATTRIBUTES_ON_INIT(addon, frame)
+	acutil.setupHook(MAKE_ABILITYSHOP_ICON_HOOKED, "MAKE_ABILITYSHOP_ICON");
 end
 
 function MAKE_ABILITYSHOP_ICON_HOOKED(frame, pc, grid, abilityClass, groupClass, posY)
@@ -25,5 +28,3 @@ function MAKE_ABILITYSHOP_ICON_HOOKED(frame, pc, grid, abilityClass, groupClass,
 
 	return _G["MAKE_ABILITYSHOP_ICON_OLD"](frame, pc, grid, abilityClass, groupClass, posY);
 end
-
-SETUP_HOOK(MAKE_ABILITYSHOP_ICON_HOOKED, "MAKE_ABILITYSHOP_ICON");

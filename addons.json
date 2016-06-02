@@ -37,6 +37,20 @@
 		]
 	},
 	{
+		"name" : "Hide Maxed Attributes",
+		"file" : "hidemaxedattributes",
+		"extension" : "ipf",
+		"releaseTag" : "brandish",
+		"fileVersion" : "v1.0.0",
+		"unicode" : "⛄",
+		"description" : "Hides attributes that are already max level in the attribute trainer window.",
+		"tags" : [
+			"ui",
+			"skills",
+			"attributes"
+		]
+	},
+	{
 		"name" : "Map Fog Viewer",
 		"file" : "mapfogviewer",
 		"extension" : "ipf",
