@@ -58,7 +58,7 @@
 		"file" : "expviewer",
 		"extension" : "ipf",
 		"fileVersion" : "v1.0.0",
-		"releaseTag" : "v1.0.0",
+		"releaseTag" : "brandish",
 		"unicode" : "⛄",
 		"description" : "Displays various experience values such as current experience, required experience, current percent, experience gained on last kill, kills til next level, experience per hour, and estimated time until level up.",
 		"tags" : [
