@@ -86,5 +86,18 @@
 			"ui",
 			"stats"
 		]
+	},
+	{
+		"name" : "Show Pet Stamina",
+		"file" : "showpetstamina",
+		"extension" : "ipf",
+		"releaseTag" : "brandish",
+		"fileVersion" : "v1.0.0",
+		"unicode" : "⛄",
+		"description" : "Displays a stamina gauge for your pet.",
+		"tags" : [
+			"ui",
+			"stats"
+		]
 	}
 ]

@@ -1,6 +1,8 @@
+local acutil = require("acutil");
+
 function SHOWPETSTAMINA_ON_INIT(addon, frame)
-	SETUP_HOOK(UPDATE_COMPANION_TITLE_HOOKED, "UPDATE_COMPANION_TITLE");
-	SETUP_HOOK(ON_RIDING_VEHICLE_HOOKED, "ON_RIDING_VEHICLE");
+	acutil.setupHook(UPDATE_COMPANION_TITLE_HOOKED, "UPDATE_COMPANION_TITLE");
+	acutil.setupHook(ON_RIDING_VEHICLE_HOOKED, "ON_RIDING_VEHICLE");
 end
 
 local function showMountedStamina()
