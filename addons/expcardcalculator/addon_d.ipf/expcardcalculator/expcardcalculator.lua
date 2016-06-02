@@ -3,8 +3,8 @@ local acutil = require("acutil");
 local currentClassExperience = 0;
 
 function EXPCARDCALCULATOR_ON_INIT(addon, frame)
-	acutil.slashCommand("/cardcalc", ui.ToggleFrame("expcardcalculator"));
-	acutil.slashCommand("/expcardcalculator", ui.ToggleFrame("expcardcalculator"));
+	acutil.slashCommand("/cardcalc", EXPCARDCALCULATOR_TOGGLE_FRAME);
+	acutil.slashCommand("/expcardcalculator", EXPCARDCALCULATOR_TOGGLE_FRAME);
 
 	addon:RegisterMsg("JOB_EXP_UPDATE", "EXPCARDCALCULATOR_ON_JOB_EXP_UPDATE");
 	addon:RegisterMsg("JOB_EXP_ADD", "EXPCARDCALCULATOR_ON_JOB_EXP_UPDATE");
@@ -15,6 +15,10 @@ function EXPCARDCALCULATOR_ON_INIT(addon, frame)
 	SYSMENU_CHECK_HIDE_VAR_ICONS(sysmenuFrame);
 
 	calculateClassRankAndLevel();
+end
+
+function EXPCARDCALCULATOR_TOGGLE_FRAME()
+	ui.ToggleFrame("expcardcalculator");
 end
 
 function EXPCARDCALCULATOR_ON_JOB_EXP_UPDATE(frame, msg, str, exp, tableinfo)
