@@ -6,8 +6,10 @@
 * Map fog viewer
 * Enhanced monster frames
 * Monster kill tracker for journal
-* Guildmates - Displays character level and character name in a tooltip. Adds party request and friend request to the context menu.
+* Guildmates - Displays character level and character name in a tooltip. Adds party request, friend request, and character info to the context menu.
 * Zoomy - Allows you to zoom in/out by holding LEFTALT+PLUS or LEFTALT+MINUS.
+* Developer Console - A window that's useful for development. Type `/dev` to open it.
+* Experience Card Calculator - Automatically calculates your card level based on experience cards in your inventory.
 
 ![Tree of Savior Experience Viewer](http://i.imgur.com/z8xXMvA.jpg)
 
