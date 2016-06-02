@@ -25,6 +25,22 @@
 		]
 	},
 	{
+		"name" : "Developer Console",
+		"file" : "developerconsole",
+		"extension" : "ipf",
+		"releaseTag" : "brandish",
+		"fileVersion" : "v1.0.0",
+		"unicode" : "⛄",
+		"description" : "A developer console to execute commands easily. Executes lua commands that you type in, creates a print() method that outputs text to the console, and adds a UI debug button. Open it with /dev.",
+		"tags" : [
+			"dev",
+			"developer",
+			"console",
+			"lua",
+			"ui"
+		]
+	},
+	{
 		"name" : "Experience Card Calculator",
 		"file" : "expcardcalculator",
 		"extension" : "ipf",

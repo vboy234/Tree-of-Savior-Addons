@@ -1,6 +1,18 @@
-dofile("../addons/dependencies/excrutil.lua");
+local acutil = require("acutil");
 
 function DEVELOPERCONSOLE_ON_INIT(addon, frame)
+	acutil.slashCommand("/dev", DEVELOPERCONSOLE_TOGGLE_FRAME);
+	acutil.slashCommand("/console", DEVELOPERCONSOLE_TOGGLE_FRAME);
+	acutil.slashCommand("/devconsole", DEVELOPERCONSOLE_TOGGLE_FRAME);
+	acutil.slashCommand("/developerconsole", DEVELOPERCONSOLE_TOGGLE_FRAME);
+
+	acutil.setupHook(DEVELOPERCONSOLE_PRINT_TEXT, "print");
+
+	CLEAR_CONSOLE();
+end
+
+function DEVELOPERCONSOLE_TOGGLE_FRAME()
+	ui.ToggleFrame("developerconsole");
 end
 
 function DEVELOPERCONSOLE_OPEN()
@@ -63,24 +75,23 @@ end
 function DEVELOPERCONSOLE_CLOSE()
 end
 
-local function clearConsole()
-	local frame = ui.GetFrame("developerconsole");
-	local textlog = frame:GetChild("textview_log");
-
-	if textlog ~= nil then
-		tolua.cast(textlog, "ui::CTextView");
-		textlog:Clear();
-		textlog:AddText("Developer Console", "white_16_ol");
-		textlog:AddText("Enter command and press execute!", "white_16_ol");
-	end
-end
-
 function TOGGLE_UI_DEBUG()
 	debug.ToggleUIDebug();
 end
 
 function CLEAR_CONSOLE()
-	clearConsole();
+	local frame = ui.GetFrame("developerconsole");
+
+	if frame ~= nil then
+		local textlog = frame:GetChild("textview_log");
+
+		if textlog ~= nil then
+			tolua.cast(textlog, "ui::CTextView");
+			textlog:Clear();
+			textlog:AddText("Developer Console", "white_16_ol");
+			textlog:AddText("Enter command and press execute!", "white_16_ol");
+		end
+	end
 end
 
 function DEVELOPERCONSOLE_PRINT_TEXT(text)
@@ -115,16 +126,10 @@ function DEVELOPERCONSOLE_ENTER_KEY(frame, control, argStr, argNum)
 				local f = assert(loadstring(commandText));
 				local status, error = pcall(f);
 
-                if not status then
+				if not status then
 					textlog:AddText(tostring(error), "white_16_ol");
-                end
+				end
 			end
 		end
 	end
 end
-
-function PRINT_HOOKED(s)
-	DEVELOPERCONSOLE_PRINT_TEXT(s);
-end
-
-SETUP_HOOK(PRINT_HOOKED, "print");
