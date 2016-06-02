@@ -1,16 +1,28 @@
-local addonName = "expcardcalculator";
-local globalAddon = _G["ADDONS"][addonName];
-local addon = _G["ADDONS"][addonName]["addon"];
-local frame = globalAddon["frame"];
+local acutil = require("acutil");
 
 local currentClassExperience = 0;
+
+function EXPCARDCALCULATOR_ON_INIT(addon, frame)
+	acutil.slashCommand("/cardcalc", ui.ToggleFrame("expcardcalculator"));
+	acutil.slashCommand("/expcardcalculator", ui.ToggleFrame("expcardcalculator"));
+
+	addon:RegisterMsg("JOB_EXP_UPDATE", "EXPCARDCALCULATOR_ON_JOB_EXP_UPDATE");
+	addon:RegisterMsg("JOB_EXP_ADD", "EXPCARDCALCULATOR_ON_JOB_EXP_UPDATE");
+
+	acutil.setupHook(SYSMENU_CHECK_HIDE_VAR_ICONS_HOOKED, "SYSMENU_CHECK_HIDE_VAR_ICONS");
+
+	local sysmenuFrame = ui.GetFrame("sysmenu");
+	SYSMENU_CHECK_HIDE_VAR_ICONS(sysmenuFrame);
+
+	calculateClassRankAndLevel();
+end
 
 function EXPCARDCALCULATOR_ON_JOB_EXP_UPDATE(frame, msg, str, exp, tableinfo)
 	currentClassExperience = exp - tableinfo.startExp;
 end
 
 function string.starts(String,Start)
-   return string.sub(String, 1, string.len(Start)) == Start
+   return string.sub(String, 1, string.len(Start)) == Start;
 end
 
 local function createExperienceRow(index, itemName, numberOfItems, totalExperience, yPosition)
@@ -32,7 +44,7 @@ local function createExperienceRow(index, itemName, numberOfItems, totalExperien
 				title:SetText(itemName .. " (" .. numberOfItems .. ")");
 
 				local stat = GET_CHILD(cardItem, "stat", "ui::CRichText");
-				stat:SetText(ADD_THOUSANDS_SEPARATOR(totalExperience));
+				stat:SetText(GetCommaedText(totalExperience));
 				title:SetUseOrifaceRect(true);
 				stat:SetUseOrifaceRect(true);
 
@@ -64,7 +76,6 @@ local function getClassData()
 		classExperienceData[jobClass.ClassName]  = {};
 		classExperienceData[jobClass.ClassName]["requiredExperience"] = jobClass.TotalXp;
 		classExperienceData[jobClass.ClassName]["totalClassExperience"] = totalClassExperience;
-
 	end
 
 	return classExperienceData, totalClassExperience;
@@ -177,7 +188,7 @@ function EXP_CARD_CALCULATOR_OPEN()
 		local baseExperiencePercent = (baseExperienceIntoLevel / requiredBaseExperience) * 100;
 
 		local baseExperienceGauge = GET_CHILD(expCardCalculatorFrame, "baseExperienceGauge", "ui::CGauge");
-		baseExperienceGauge:SetTextTooltip("{@st42b}" .. ADD_THOUSANDS_SEPARATOR(baseExperienceIntoLevel) .. " / " .. ADD_THOUSANDS_SEPARATOR(requiredBaseExperience) .. " (" .. baseExperiencePercent .. "%){/}");
+		baseExperienceGauge:SetTextTooltip("{@st42b}" .. GetCommaedText(baseExperienceIntoLevel) .. " / " .. GetCommaedText(requiredBaseExperience) .. " (" .. baseExperiencePercent .. "%){/}");
 		baseExperienceGauge:SetPoint(baseExperienceIntoLevel, requiredBaseExperience);
 		baseExperienceGauge:Resize(expCardCalculatorFrame:GetWidth() - 50, baseExperienceGauge:GetHeight());
 		baseExperienceGauge:ShowWindow(1);
@@ -203,13 +214,6 @@ end
 function EXP_CARD_CALCULATOR_CLOSE()
 end
 
-local function init()
-	addon:RegisterMsg("JOB_EXP_UPDATE", "EXPCARDCALCULATOR_ON_JOB_EXP_UPDATE");
-	addon:RegisterMsg("JOB_EXP_ADD", "EXPCARDCALCULATOR_ON_JOB_EXP_UPDATE");
-
-	calculateClassRankAndLevel();
-end
-
 function SYSMENU_CHECK_HIDE_VAR_ICONS_HOOKED(frame)
 	if false == VARICON_VISIBLE_STATE_CHANTED(frame, "necronomicon", "necronomicon")
 	and false == VARICON_VISIBLE_STATE_CHANTED(frame, "grimoire", "grimoire")
@@ -230,15 +234,11 @@ function SYSMENU_CHECK_HIDE_VAR_ICONS_HOOKED(frame)
 	startX = SYSMENU_CREATE_VARICON(frame, status, "necronomicon", "necronomicon", "sysmenu_card", startX, offsetX);
 	startX = SYSMENU_CREATE_VARICON(frame, status, "grimoire", "grimoire", "sysmenu_neacro", startX, offsetX);
 	startX = SYSMENU_CREATE_VARICON(frame, status, "poisonpot", "poisonpot", "sysmenu_wugushi", startX, offsetX);
-	startX = SYSMENU_CREATE_VARICON(frame, status, "expcardcalculator", "expcardcalculator", "sysmenu_jem", startX, offsetX, "Addons");
+	startX = SYSMENU_CREATE_VARICON(frame, status, "poisonpot", "poisonpot", "sysmenu_wugushi", startX, offsetX);
+	startX = SYSMENU_CREATE_VARICON(frame, status, "expcardcalculator", "expcardcalculator", "addonmenu_expcard", startX, offsetX, "Experience Card Calculator");
 
 	local expcardcalculatorButton = GET_CHILD(frame, "expcardcalculator", "ui::CButton");
-	expcardcalculatorButton:SetTextTooltip("{@st59}Experience Card Calculator");
+	if expcardcalculatorButton ~= nil then
+		expcardcalculatorButton:SetTextTooltip("{@st59}Experience Card Calculator");
+	end
 end
-
-SETUP_HOOK(SYSMENU_CHECK_HIDE_VAR_ICONS_HOOKED, "SYSMENU_CHECK_HIDE_VAR_ICONS");
-
-local sysmenuFrame = ui.GetFrame("sysmenu");
-SYSMENU_CHECK_HIDE_VAR_ICONS(sysmenuFrame);
-
-init();

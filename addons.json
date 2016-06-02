@@ -25,6 +25,19 @@
 		]
 	},
 	{
+		"name" : "Experience Card Calculator",
+		"file" : "expcardcalculator",
+		"extension" : "ipf",
+		"releaseTag" : "brandish",
+		"fileVersion" : "v1.0.0",
+		"unicode" : "⛄",
+		"description" : "Automatically calculates your card level based on the experience cards you have in your inventory.",
+		"tags" : [
+			"experience",
+			"card"
+		]
+	},
+	{
 		"name" : "Guildmates",
 		"file" : "guildmates",
 		"extension" : "ipf",
