@@ -1,3 +1,5 @@
+local acutil = require("acutil");
+
 local settings = {
 	showCurrentRequiredExperience = true;
 	showCurrentPercent = true;
@@ -8,11 +10,68 @@ local settings = {
 };
 
 function EXPVIEWER_ON_INIT(addon, frame)
-	SETUP_HOOK(CHARBASEINFO_ON_MSG_HOOKED, "CHARBASEINFO_ON_MSG");
-	SETUP_HOOK(ON_JOB_EXP_UPDATE_HOOKED, "ON_JOB_EXP_UPDATE");
-	SETUP_HOOK(HEADSUPDISPLAY_ON_MSG_HOOKED, "HEADSUPDISPLAY_ON_MSG");
+	acutil.setupHook(CHARBASEINFO_ON_MSG_HOOKED, "CHARBASEINFO_ON_MSG");
+	acutil.setupHook(ON_JOB_EXP_UPDATE_HOOKED, "ON_JOB_EXP_UPDATE");
+	acutil.setupHook(HEADSUPDISPLAY_ON_MSG_HOOKED, "HEADSUPDISPLAY_ON_MSG");
+
+	frame:EnableHitTest(1);
+	frame:SetEventScript(ui.RBUTTONDOWN, "EXPVIEWER_CONTEXT_MENU");
 
 	INIT();
+end
+
+function EXPVIEWER_CONTEXT_MENU()
+	local context = ui.CreateContextMenu("CONTEXT_CHAT_RBTN", "Experience Viewer", 0, 0, 300, 100);
+
+	ui.AddContextMenuItem(context, "Reset Session", "RESET()", "Experience Viewer");
+	ui.AddContextMenuItem(context, "Current / Required", string.format("EXPVIEWER_TOGGLE_CURRENT();"));
+	ui.AddContextMenuItem(context, "Current %", string.format("EXPVIEWER_TOGGLE_CURRENT_PERCENT();"));
+	ui.AddContextMenuItem(context, "Last Gained", string.format("EXPVIEWER_TOGGLE_LAST_GAINED();"));
+	ui.AddContextMenuItem(context, "TNL", string.format("EXPVIEWER_TOGGLE_TNL();"));
+	ui.AddContextMenuItem(context, "Exp/Hr", string.format("EXPVIEWER_TOGGLE_EXPERIENCE_PER_HOUR();"));
+	ui.AddContextMenuItem(context, "ETA", string.format("EXPVIEWER_TOGGLE_TIME_TIL_LEVEL();"));
+	ui.AddContextMenuItem(context, "Cancel", "None");
+
+	context:Resize(300, context:GetHeight());
+
+	ui.OpenContextMenu(context);
+end
+
+--cause I'm lazy...
+function EXPVIEWER_TOGGLE_CURRENT()
+	settings.showCurrentRequiredExperience = not settings.showCurrentRequiredExperience;
+	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+end
+
+function EXPVIEWER_TOGGLE_CURRENT_PERCENT()
+	settings.showCurrentPercent = not settings.showCurrentPercent;
+	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+end
+
+function EXPVIEWER_TOGGLE_LAST_GAINED()
+	settings.showLastGainedExperience = not settings.showLastGainedExperience;
+	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+end
+
+function EXPVIEWER_TOGGLE_TNL()
+	settings.showKillsTilNextLevel = not settings.showKillsTilNextLevel;
+	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+end
+
+function EXPVIEWER_TOGGLE_EXPERIENCE_PER_HOUR()
+	settings.showExperiencePerHour = not settings.showExperiencePerHour;
+	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+end
+
+function EXPVIEWER_TOGGLE_TIME_TIL_LEVEL()
+	settings.showTimeTilLevel = not settings.showTimeTilLevel;
+	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
 end
 
 --[[START EXPERIENCE DATA]]
@@ -280,7 +339,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 						xPosition = UPDATE_CELL(
 							i,
 							richText,
-							"{@st41}{s16}" .. ADD_THOUSANDS_SEPARATOR(experienceData.currentExperience) .." / " .. ADD_THOUSANDS_SEPARATOR(experienceData.requiredExperience),
+							"{@st41}{s16}" .. GetCommaedText(experienceData.currentExperience) .." / " .. GetCommaedText(experienceData.requiredExperience),
 							settings.showCurrentRequiredExperience,
 							xPosition,
 							yPosition,
@@ -300,7 +359,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 						xPosition = UPDATE_CELL(
 							i,
 							richText,
-							"{@st41}{s16}" .. ADD_THOUSANDS_SEPARATOR(experienceData.lastExperienceGain),
+							"{@st41}{s16}" .. GetCommaedText(experienceData.lastExperienceGain),
 							settings.showLastGainedExperience,
 							xPosition,
 							yPosition,
@@ -310,7 +369,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 						xPosition = UPDATE_CELL(
 							i,
 							richText,
-							"{@st41}{s16}" .. ADD_THOUSANDS_SEPARATOR(experienceData.killsTilNextLevel),
+							"{@st41}{s16}" .. GetCommaedText(experienceData.killsTilNextLevel),
 							settings.showKillsTilNextLevel,
 							xPosition,
 							yPosition,
@@ -320,7 +379,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 						xPosition = UPDATE_CELL(
 							i,
 							richText,
-							"{@st41}{s16}" .. ADD_THOUSANDS_SEPARATOR(string.format("%i", experienceData.experiencePerHour)),
+							"{@st41}{s16}" .. GetCommaedText(string.format("%i", experienceData.experiencePerHour)),
 							settings.showExperiencePerHour,
 							xPosition,
 							yPosition,
@@ -354,7 +413,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 						xPosition = UPDATE_CELL(
 							i,
 							richText,
-							"{@st41}{s16}" .. ADD_THOUSANDS_SEPARATOR(experienceData.currentExperience) .." / " .. ADD_THOUSANDS_SEPARATOR(experienceData.requiredExperience),
+							"{@st41}{s16}" .. GetCommaedText(experienceData.currentExperience) .." / " .. GetCommaedText(experienceData.requiredExperience),
 							settings.showCurrentRequiredExperience,
 							xPosition,
 							yPosition,
@@ -374,7 +433,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 						xPosition = UPDATE_CELL(
 							i,
 							richText,
-							"{@st41}{s16}" .. ADD_THOUSANDS_SEPARATOR(experienceData.lastExperienceGain),
+							"{@st41}{s16}" .. GetCommaedText(experienceData.lastExperienceGain),
 							settings.showLastGainedExperience,
 							xPosition,
 							yPosition,
@@ -384,7 +443,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 						xPosition = UPDATE_CELL(
 							i,
 							richText,
-							"{@st41}{s16}" .. ADD_THOUSANDS_SEPARATOR(experienceData.killsTilNextLevel),
+							"{@st41}{s16}" .. GetCommaedText(experienceData.killsTilNextLevel),
 							settings.showKillsTilNextLevel,
 							xPosition,
 							yPosition,
@@ -394,7 +453,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 						xPosition = UPDATE_CELL(
 							i,
 							richText,
-							"{@st41}{s16}" .. ADD_THOUSANDS_SEPARATOR(string.format("%i", experienceData.experiencePerHour)),
+							"{@st41}{s16}" .. GetCommaedText(string.format("%i", experienceData.experiencePerHour)),
 							settings.showExperiencePerHour,
 							xPosition,
 							yPosition,
