@@ -10,12 +10,13 @@ local settings = {
 };
 
 function EXPVIEWER_ON_INIT(addon, frame)
-	acutil.setupHook(CHARBASEINFO_ON_MSG_HOOKED, "CHARBASEINFO_ON_MSG");
-	acutil.setupHook(ON_JOB_EXP_UPDATE_HOOKED, "ON_JOB_EXP_UPDATE");
-	acutil.setupHook(HEADSUPDISPLAY_ON_MSG_HOOKED, "HEADSUPDISPLAY_ON_MSG");
-
 	frame:EnableHitTest(1);
 	frame:SetEventScript(ui.RBUTTONDOWN, "EXPVIEWER_CONTEXT_MENU");
+
+	addon:RegisterMsg('EXP_UPDATE', 'EXPVIEWER_EXP_UPDATE');
+	addon:RegisterMsg('JOB_EXP_UPDATE', 'EXPVIEWER_JOB_EXP_UPDATE');
+	addon:RegisterMsg('JOB_EXP_ADD', 'EXPVIEWER_JOB_EXP_UPDATE');
+	addon:RegisterMsg("FPS_UPDATE", "EXPVIEWER_CALCULATE_TICK");
 
 	INIT();
 end
@@ -23,7 +24,7 @@ end
 function EXPVIEWER_CONTEXT_MENU()
 	local context = ui.CreateContextMenu("CONTEXT_CHAT_RBTN", "Experience Viewer", 0, 0, 300, 100);
 
-	ui.AddContextMenuItem(context, "Reset Session", "RESET()", "Experience Viewer");
+	ui.AddContextMenuItem(context, "Reset Session", "RESET()");
 	ui.AddContextMenuItem(context, "Current / Required", string.format("EXPVIEWER_TOGGLE_CURRENT();"));
 	ui.AddContextMenuItem(context, "Current %", string.format("EXPVIEWER_TOGGLE_CURRENT_PERCENT();"));
 	ui.AddContextMenuItem(context, "Last Gained", string.format("EXPVIEWER_TOGGLE_LAST_GAINED();"));
@@ -158,15 +159,7 @@ function INIT()
 	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
 end
 
-function HEADSUPDISPLAY_ON_MSG_HOOKED(frame, msg, argStr, argNum)
-	local oldf = _G["HEADSUPDISPLAY_ON_MSG_OLD"];
-	oldf(frame, msg, argStr, argNum);
-
-	MOVE_WINDOW_TO_STORED_POSITION();
-	INIT();
-end
-
-function CHARBASEINFO_ON_MSG_HOOKED(frame, msg, argStr, argNum)
+function EXPVIEWER_EXP_UPDATE(frame, msg, argStr, argNum)
 	if msg == 'EXP_UPDATE' then
 		_G["EXPERIENCE_VIEWER"]["elapsedTime"] = os.difftime(os.clock(), _G["EXPERIENCE_VIEWER"]["startTime"]);
 
@@ -180,12 +173,9 @@ function CHARBASEINFO_ON_MSG_HOOKED(frame, msg, argStr, argNum)
 
 		UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
 	end
-
-	local oldf = _G["CHARBASEINFO_ON_MSG_OLD"];
-	return oldf(frame, msg, str, exp, tableinfo);
 end
 
-function ON_JOB_EXP_UPDATE_HOOKED(frame, msg, str, exp, tableinfo)
+function EXPVIEWER_JOB_EXP_UPDATE(frame, msg, str, exp, tableinfo)
 	_G["EXPERIENCE_VIEWER"]["elapsedTime"] = os.difftime(os.clock(), _G["EXPERIENCE_VIEWER"]["startTime"]);
 
 	--CALCULATE EXPERIENCE
@@ -201,9 +191,6 @@ function ON_JOB_EXP_UPDATE_HOOKED(frame, msg, str, exp, tableinfo)
 	CALCULATE_EXPERIENCE_DATA(_G["EXPERIENCE_VIEWER"]["classExperienceData"], _G["EXPERIENCE_VIEWER"]["elapsedTime"]);
 
 	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
-
-	local oldf = _G["ON_JOB_EXP_UPDATE_OLD"];
-	return oldf(frame, msg, str, exp, tableinfo);
 end
 
 function CALCULATE_EXPERIENCE_DATA(experienceData, elapsedTime)
@@ -239,6 +226,30 @@ function CALCULATE_EXPERIENCE_DATA(experienceData, elapsedTime)
 
 	--[[END OF UPDATES, SET PREVIOUS]]
 	experienceData.previousCurrentExperience = experienceData.currentExperience;
+end
+
+function EXPVIEWER_CALCULATE_TICK()
+	_G["EXPERIENCE_VIEWER"]["elapsedTime"] = os.difftime(os.clock(), _G["EXPERIENCE_VIEWER"]["startTime"]);
+
+	EXPVIEWER_CALCULATE_EXPERIENCE_PER_HOUR(_G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	EXPVIEWER_CALCULATE_EXPERIENCE_PER_HOUR(_G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+
+	EXPVIEWER_CALCULATE_TIME_TIL_LEVEL(_G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	EXPVIEWER_CALCULATE_TIME_TIL_LEVEL(_G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+
+	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+end
+
+function EXPVIEWER_CALCULATE_EXPERIENCE_PER_HOUR(experienceData)
+	experienceData.experiencePerHour = (experienceData.experienceGained * (_G["EXPERIENCE_VIEWER"]["SECONDS_IN_HOUR"] / _G["EXPERIENCE_VIEWER"]["elapsedTime"]));
+end
+
+function EXPVIEWER_CALCULATE_TIME_TIL_LEVEL(experienceData)
+	local experienceRemaining = experienceData.requiredExperience - experienceData.currentExperience;
+	local experiencePerSecond = experienceData.experienceGained / _G["EXPERIENCE_VIEWER"]["elapsedTime"];
+
+	experienceData.timeTilLevel = os.date("!%X", experienceRemaining / experiencePerSecond);
 end
 
 function UPDATE_UI(experienceTextName, experienceData)
