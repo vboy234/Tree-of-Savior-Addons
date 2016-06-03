@@ -7,6 +7,7 @@ local settings = {
 	showKillsTilNextLevel = true;
 	showExperiencePerHour = true;
 	showTimeTilLevel = true;
+	skin = "test_Item_tooltip_normal";
 };
 
 function EXPVIEWER_ON_INIT(addon, frame)
@@ -18,24 +19,75 @@ function EXPVIEWER_ON_INIT(addon, frame)
 	addon:RegisterMsg('JOB_EXP_ADD', 'EXPVIEWER_JOB_EXP_UPDATE');
 	addon:RegisterMsg("FPS_UPDATE", "EXPVIEWER_CALCULATE_TICK");
 
+	frame:SetSkinName(settings.skin);
+
 	INIT();
 end
 
 function EXPVIEWER_CONTEXT_MENU()
-	local context = ui.CreateContextMenu("CONTEXT_CHAT_RBTN", "Experience Viewer", 0, 0, 300, 100);
+	local skinList = {
+		"test_Item_tooltip_normal",
+		"shadow_box",
+		"systemmenu_vertical",
+		"chat_window",
+		"popup_rightclick",
+		"persoanl_shop_basicframe",
+		"tutorial_skin",
+		"slot_name",
+		"padslot_onskin",
+		"padslot_offskin2",
+		"monster_skill_bg",
+		"tab2_btn",
+		"fullblack_bg",
+		"testjoo_buttons", --clear
+		"test_skin_01_btn_cursoron",
+		"test_skin_01_btn_clicked",
+		"test_normal_button",
+		"frame_bg",
+		"textview",
+		"listbox",
+		"box_glass",
+		"tooltip1",
+		"textballoon",
+		"quest_box",
+		"guildquest_box",
+		"balloonskin_buy",
+		"barrack_creat_win",
+		"pip_simple_frame"
+	}
+
+	local context = ui.CreateContextMenu("EXPVIEWER_RBTN", "Experience Viewer", 0, 0, 300, 100);
 
 	ui.AddContextMenuItem(context, "Reset Session", "RESET()");
-	ui.AddContextMenuItem(context, "Current / Required", string.format("EXPVIEWER_TOGGLE_CURRENT();"));
-	ui.AddContextMenuItem(context, "Current %", string.format("EXPVIEWER_TOGGLE_CURRENT_PERCENT();"));
-	ui.AddContextMenuItem(context, "Last Gained", string.format("EXPVIEWER_TOGGLE_LAST_GAINED();"));
-	ui.AddContextMenuItem(context, "TNL", string.format("EXPVIEWER_TOGGLE_TNL();"));
-	ui.AddContextMenuItem(context, "Exp/Hr", string.format("EXPVIEWER_TOGGLE_EXPERIENCE_PER_HOUR();"));
-	ui.AddContextMenuItem(context, "ETA", string.format("EXPVIEWER_TOGGLE_TIME_TIL_LEVEL();"));
-	ui.AddContextMenuItem(context, "Cancel", "None");
 
+	local subContextSkin = ui.CreateContextMenu("SUBCONTEXT_SKIN", "", 0, 0, 0, 0);
+
+	for i=1,#skinList do
+		ui.AddContextMenuItem(subContextSkin, skinList[i], string.format("EXPVIEWER_CHANGE_SKIN('%s')", skinList[i]));
+	end
+
+	ui.AddContextMenuItem(context, "Skin {img white_right_arrow 18 18}", 	"", nil, 0, 1, subContextSkin);
+
+	local subContextToggle = ui.CreateContextMenu("SUBCONTEXT_TOGGLE", "", 0, 0, 0, 0);
+	ui.AddContextMenuItem(subContextToggle, "Current / Required", string.format("EXPVIEWER_TOGGLE_CURRENT();"));
+	ui.AddContextMenuItem(subContextToggle, "Current %", string.format("EXPVIEWER_TOGGLE_CURRENT_PERCENT();"));
+	ui.AddContextMenuItem(subContextToggle, "Last Gained", string.format("EXPVIEWER_TOGGLE_LAST_GAINED();"));
+	ui.AddContextMenuItem(subContextToggle, "TNL", string.format("EXPVIEWER_TOGGLE_TNL();"));
+	ui.AddContextMenuItem(subContextToggle, "Exp/Hr", string.format("EXPVIEWER_TOGGLE_EXPERIENCE_PER_HOUR();"));
+	ui.AddContextMenuItem(subContextToggle, "ETA", string.format("EXPVIEWER_TOGGLE_TIME_TIL_LEVEL();"));
+	ui.AddContextMenuItem(subContextToggle, "Cancel", "None");
+	ui.AddContextMenuItem(context, "Toggle {img white_right_arrow 18 18}", "", nil, 0, 1, subContextToggle);
+
+	subContextSkin:Resize(300, subContextSkin:GetHeight());
+	subContextToggle:Resize(300, subContextToggle:GetHeight());
 	context:Resize(300, context:GetHeight());
 
 	ui.OpenContextMenu(context);
+end
+
+function EXPVIEWER_CHANGE_SKIN(skin)
+	local frame = ui.GetFrame("expviewer");
+	frame:SetSkinName(skin);
 end
 
 --cause I'm lazy...
