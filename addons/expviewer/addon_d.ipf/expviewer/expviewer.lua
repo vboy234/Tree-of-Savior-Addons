@@ -11,6 +11,8 @@ local settings = {
 };
 
 function EXPVIEWER_ON_INIT(addon, frame)
+	settings = acutil.loadJSON("../addons/expviewer/settings.json");
+
 	frame:EnableHitTest(1);
 	frame:SetEventScript(ui.RBUTTONDOWN, "EXPVIEWER_CONTEXT_MENU");
 
@@ -18,8 +20,6 @@ function EXPVIEWER_ON_INIT(addon, frame)
 	addon:RegisterMsg('JOB_EXP_UPDATE', 'EXPVIEWER_JOB_EXP_UPDATE');
 	addon:RegisterMsg('JOB_EXP_ADD', 'EXPVIEWER_JOB_EXP_UPDATE');
 	addon:RegisterMsg("FPS_UPDATE", "EXPVIEWER_CALCULATE_TICK");
-
-	frame:SetSkinName(settings.skin);
 
 	INIT();
 end
@@ -60,14 +60,6 @@ function EXPVIEWER_CONTEXT_MENU()
 
 	ui.AddContextMenuItem(context, "Reset Session", "RESET()");
 
-	local subContextSkin = ui.CreateContextMenu("SUBCONTEXT_SKIN", "", 0, 0, 0, 0);
-
-	for i=1,#skinList do
-		ui.AddContextMenuItem(subContextSkin, skinList[i], string.format("EXPVIEWER_CHANGE_SKIN('%s')", skinList[i]));
-	end
-
-	ui.AddContextMenuItem(context, "Skin {img white_right_arrow 18 18}", 	"", nil, 0, 1, subContextSkin);
-
 	local subContextToggle = ui.CreateContextMenu("SUBCONTEXT_TOGGLE", "", 0, 0, 0, 0);
 	ui.AddContextMenuItem(subContextToggle, "Current / Required", string.format("EXPVIEWER_TOGGLE_CURRENT();"));
 	ui.AddContextMenuItem(subContextToggle, "Current %", string.format("EXPVIEWER_TOGGLE_CURRENT_PERCENT();"));
@@ -77,6 +69,14 @@ function EXPVIEWER_CONTEXT_MENU()
 	ui.AddContextMenuItem(subContextToggle, "ETA", string.format("EXPVIEWER_TOGGLE_TIME_TIL_LEVEL();"));
 	ui.AddContextMenuItem(subContextToggle, "Cancel", "None");
 	ui.AddContextMenuItem(context, "Toggle {img white_right_arrow 18 18}", "", nil, 0, 1, subContextToggle);
+
+	local subContextSkin = ui.CreateContextMenu("SUBCONTEXT_SKIN", "", 0, 0, 0, 0);
+
+	for i=1,#skinList do
+		ui.AddContextMenuItem(subContextSkin, skinList[i], string.format("EXPVIEWER_CHANGE_SKIN('%s')", skinList[i]));
+	end
+
+	ui.AddContextMenuItem(context, "Skin {img white_right_arrow 18 18}", "", nil, 0, 1, subContextSkin);
 
 	subContextSkin:Resize(300, subContextSkin:GetHeight());
 	subContextToggle:Resize(300, subContextToggle:GetHeight());
@@ -88,43 +88,65 @@ end
 function EXPVIEWER_CHANGE_SKIN(skin)
 	local frame = ui.GetFrame("expviewer");
 	frame:SetSkinName(skin);
+	settings.skin = skin;
+	EXPVIEWER_SAVE_SETTINGS();
 end
 
 --cause I'm lazy...
 function EXPVIEWER_TOGGLE_CURRENT()
 	settings.showCurrentRequiredExperience = not settings.showCurrentRequiredExperience;
+	EXPVIEWER_SAVE_SETTINGS();
+
 	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
 	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
 end
 
 function EXPVIEWER_TOGGLE_CURRENT_PERCENT()
 	settings.showCurrentPercent = not settings.showCurrentPercent;
+	EXPVIEWER_SAVE_SETTINGS();
+
 	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
 	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
 end
 
 function EXPVIEWER_TOGGLE_LAST_GAINED()
 	settings.showLastGainedExperience = not settings.showLastGainedExperience;
+	EXPVIEWER_SAVE_SETTINGS();
+
 	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
 	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
 end
 
 function EXPVIEWER_TOGGLE_TNL()
 	settings.showKillsTilNextLevel = not settings.showKillsTilNextLevel;
+	EXPVIEWER_SAVE_SETTINGS();
+
 	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
 	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
 end
 
 function EXPVIEWER_TOGGLE_EXPERIENCE_PER_HOUR()
 	settings.showExperiencePerHour = not settings.showExperiencePerHour;
+	EXPVIEWER_SAVE_SETTINGS();
+
 	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
 	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
 end
 
 function EXPVIEWER_TOGGLE_TIME_TIL_LEVEL()
 	settings.showTimeTilLevel = not settings.showTimeTilLevel;
+	EXPVIEWER_SAVE_SETTINGS();
+
 	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
 	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+end
+
+function EXPVIEWER_SAVE_SETTINGS()
+	acutil.saveJSON("../addons/expviewer/settings.json", settings);
+end
+
+function EXPVIEWER_LOAD_SETTINGS()
+	settings = acutil.loadJSON("../addons/expviewer/settings.json");
 end
 
 --[[START EXPERIENCE DATA]]
