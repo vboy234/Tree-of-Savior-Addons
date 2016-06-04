@@ -68,7 +68,12 @@ function EXPVIEWER_ON_INIT(addon, frame)
 	addon:RegisterMsg('JOB_EXP_ADD', 'EXPVIEWER_JOB_EXP_UPDATE');
 	addon:RegisterMsg("FPS_UPDATE", "EXPVIEWER_CALCULATE_TICK");
 
-	frame:ShowWindow(1);
+	if _G["EXPERIENCE_VIEWER"]["settings"].showExperienceViewer then
+		frame:ShowWindow(1);
+	else
+		frame:ShowWindow(0);
+	end
+	
 	MOVE_FRAME_TO_SAVED_POSITION();
 	frame:SetSkinName(_G["EXPERIENCE_VIEWER"]["settings"].skin);
 
@@ -89,6 +94,8 @@ end
 
 function EXPVIEWER_TOGGLE_FRAME()
 	ui.ToggleFrame("expviewer");
+	_G["EXPERIENCE_VIEWER"]["settings"].showExperienceViewer = not _G["EXPERIENCE_VIEWER"]["settings"].showExperienceViewer;
+	EXPVIEWER_SAVE_SETTINGS();
 end
 
 function EXPVIEWER_CONTEXT_MENU()
@@ -221,6 +228,7 @@ function EXPVIEWER_SAVE_SETTINGS()
 			showKillsTilNextLevel = true;
 			showExperiencePerHour = true;
 			showTimeTilLevel = true;
+			showExperienceViewer = true;
 			skin = "shadow_box";
 		};
 	else
