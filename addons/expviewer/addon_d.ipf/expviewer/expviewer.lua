@@ -1,154 +1,3 @@
-local acutil = require("acutil");
-
-local settings = {
-	showCurrentRequiredExperience = true;
-	showCurrentPercent = true;
-	showLastGainedExperience = true;
-	showKillsTilNextLevel = true;
-	showExperiencePerHour = true;
-	showTimeTilLevel = true;
-	skin = "test_Item_tooltip_normal";
-};
-
-function EXPVIEWER_ON_INIT(addon, frame)
-	settings = acutil.loadJSON("../addons/expviewer/settings.json");
-
-	frame:EnableHitTest(1);
-	frame:SetEventScript(ui.RBUTTONDOWN, "EXPVIEWER_CONTEXT_MENU");
-
-	addon:RegisterMsg('EXP_UPDATE', 'EXPVIEWER_EXP_UPDATE');
-	addon:RegisterMsg('JOB_EXP_UPDATE', 'EXPVIEWER_JOB_EXP_UPDATE');
-	addon:RegisterMsg('JOB_EXP_ADD', 'EXPVIEWER_JOB_EXP_UPDATE');
-	addon:RegisterMsg("FPS_UPDATE", "EXPVIEWER_CALCULATE_TICK");
-
-	INIT();
-end
-
-function EXPVIEWER_CONTEXT_MENU()
-	local skinList = {
-		"test_Item_tooltip_normal",
-		"shadow_box",
-		"systemmenu_vertical",
-		"chat_window",
-		"popup_rightclick",
-		"persoanl_shop_basicframe",
-		"tutorial_skin",
-		"slot_name",
-		"padslot_onskin",
-		"padslot_offskin2",
-		"monster_skill_bg",
-		"tab2_btn",
-		"fullblack_bg",
-		"testjoo_buttons", --clear
-		"test_skin_01_btn_cursoron",
-		"test_skin_01_btn_clicked",
-		"test_normal_button",
-		"frame_bg",
-		"textview",
-		"listbox",
-		"box_glass",
-		"tooltip1",
-		"textballoon",
-		"quest_box",
-		"guildquest_box",
-		"balloonskin_buy",
-		"barrack_creat_win",
-		"pip_simple_frame"
-	}
-
-	local context = ui.CreateContextMenu("EXPVIEWER_RBTN", "Experience Viewer", 0, 0, 300, 100);
-
-	ui.AddContextMenuItem(context, "Reset Session", "RESET()");
-
-	local subContextToggle = ui.CreateContextMenu("SUBCONTEXT_TOGGLE", "", 0, 0, 0, 0);
-	ui.AddContextMenuItem(subContextToggle, "Current / Required", string.format("EXPVIEWER_TOGGLE_CURRENT();"));
-	ui.AddContextMenuItem(subContextToggle, "Current %", string.format("EXPVIEWER_TOGGLE_CURRENT_PERCENT();"));
-	ui.AddContextMenuItem(subContextToggle, "Last Gained", string.format("EXPVIEWER_TOGGLE_LAST_GAINED();"));
-	ui.AddContextMenuItem(subContextToggle, "TNL", string.format("EXPVIEWER_TOGGLE_TNL();"));
-	ui.AddContextMenuItem(subContextToggle, "Exp/Hr", string.format("EXPVIEWER_TOGGLE_EXPERIENCE_PER_HOUR();"));
-	ui.AddContextMenuItem(subContextToggle, "ETA", string.format("EXPVIEWER_TOGGLE_TIME_TIL_LEVEL();"));
-	ui.AddContextMenuItem(subContextToggle, "Cancel", "None");
-	ui.AddContextMenuItem(context, "Toggle {img white_right_arrow 18 18}", "", nil, 0, 1, subContextToggle);
-
-	local subContextSkin = ui.CreateContextMenu("SUBCONTEXT_SKIN", "", 0, 0, 0, 0);
-
-	for i=1,#skinList do
-		ui.AddContextMenuItem(subContextSkin, skinList[i], string.format("EXPVIEWER_CHANGE_SKIN('%s')", skinList[i]));
-	end
-
-	ui.AddContextMenuItem(context, "Skin {img white_right_arrow 18 18}", "", nil, 0, 1, subContextSkin);
-
-	subContextSkin:Resize(300, subContextSkin:GetHeight());
-	subContextToggle:Resize(300, subContextToggle:GetHeight());
-	context:Resize(300, context:GetHeight());
-
-	ui.OpenContextMenu(context);
-end
-
-function EXPVIEWER_CHANGE_SKIN(skin)
-	local frame = ui.GetFrame("expviewer");
-	frame:SetSkinName(skin);
-	settings.skin = skin;
-	EXPVIEWER_SAVE_SETTINGS();
-end
-
---cause I'm lazy...
-function EXPVIEWER_TOGGLE_CURRENT()
-	settings.showCurrentRequiredExperience = not settings.showCurrentRequiredExperience;
-	EXPVIEWER_SAVE_SETTINGS();
-
-	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
-	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
-end
-
-function EXPVIEWER_TOGGLE_CURRENT_PERCENT()
-	settings.showCurrentPercent = not settings.showCurrentPercent;
-	EXPVIEWER_SAVE_SETTINGS();
-
-	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
-	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
-end
-
-function EXPVIEWER_TOGGLE_LAST_GAINED()
-	settings.showLastGainedExperience = not settings.showLastGainedExperience;
-	EXPVIEWER_SAVE_SETTINGS();
-
-	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
-	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
-end
-
-function EXPVIEWER_TOGGLE_TNL()
-	settings.showKillsTilNextLevel = not settings.showKillsTilNextLevel;
-	EXPVIEWER_SAVE_SETTINGS();
-
-	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
-	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
-end
-
-function EXPVIEWER_TOGGLE_EXPERIENCE_PER_HOUR()
-	settings.showExperiencePerHour = not settings.showExperiencePerHour;
-	EXPVIEWER_SAVE_SETTINGS();
-
-	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
-	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
-end
-
-function EXPVIEWER_TOGGLE_TIME_TIL_LEVEL()
-	settings.showTimeTilLevel = not settings.showTimeTilLevel;
-	EXPVIEWER_SAVE_SETTINGS();
-
-	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
-	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
-end
-
-function EXPVIEWER_SAVE_SETTINGS()
-	acutil.saveJSON("../addons/expviewer/settings.json", settings);
-end
-
-function EXPVIEWER_LOAD_SETTINGS()
-	settings = acutil.loadJSON("../addons/expviewer/settings.json");
-end
-
 --[[START EXPERIENCE DATA]]
 local ExperienceData = {}
 ExperienceData.__index = ExperienceData
@@ -204,33 +53,193 @@ _G["EXPERIENCE_VIEWER"]["classTablePositions"] = _G["EXPERIENCE_VIEWER"]["classT
 _G["EXPERIENCE_VIEWER"]["frameWidths"] = _G["EXPERIENCE_VIEWER"]["frameWidths"] or { 0, 0, 0, 0, 0, 0 };
 _G["EXPERIENCE_VIEWER"]["padding"] = _G["EXPERIENCE_VIEWER"]["padding"] or 5;
 
-function SET_WINDOW_POSITION_GLOBAL()
-	local expFrame = ui.GetFrame("expviewer");
+local acutil = require("acutil");
 
-	if expFrame ~= nil then
-		_G["EXPERIENCE_VIEWER"]["POSITION_X"] = expFrame:GetX();
-		_G["EXPERIENCE_VIEWER"]["POSITION_Y"] = expFrame:GetY();
-	end
+function EXPVIEWER_ON_INIT(addon, frame)
+	EXPVIEWER_LOAD_SETTINGS();
 
-	SAVE_POSITION_TO_FILE(expFrame:GetX(), expFrame:GetY());
-end
+	acutil.slashCommand("/expviewer", EXPVIEWER_TOGGLE_FRAME);
 
-function MOVE_WINDOW_TO_STORED_POSITION()
-	local expFrame = ui.GetFrame("expviewer");
+	frame:EnableHitTest(1);
+	frame:SetEventScript(ui.RBUTTONDOWN, "EXPVIEWER_CONTEXT_MENU");
 
-	if expFrame ~= nil then
-		expFrame:Move(0, 0);
-		expFrame:SetOffset(_G["EXPERIENCE_VIEWER"]["POSITION_X"], _G["EXPERIENCE_VIEWER"]["POSITION_Y"]);
-	end
-end
+	addon:RegisterMsg('EXP_UPDATE', 'EXPVIEWER_EXP_UPDATE');
+	addon:RegisterMsg('JOB_EXP_UPDATE', 'EXPVIEWER_JOB_EXP_UPDATE');
+	addon:RegisterMsg('JOB_EXP_ADD', 'EXPVIEWER_JOB_EXP_UPDATE');
+	addon:RegisterMsg("FPS_UPDATE", "EXPVIEWER_CALCULATE_TICK");
 
-function INIT()
-	LOAD_POSITION_FROM_FILE();
-	local expFrame = ui.GetFrame("expviewer");
-	expFrame:ShowWindow(1);
-	UPDATE_BUTTONS(expFrame);
+	frame:ShowWindow(1);
+	MOVE_FRAME_TO_SAVED_POSITION();
+	frame:SetSkinName(_G["EXPERIENCE_VIEWER"]["settings"].skin);
+
+	UPDATE_BUTTONS(frame);
+
 	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
 	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+end
+
+function MOVE_FRAME_TO_SAVED_POSITION()
+	local frame = ui.GetFrame("expviewer");
+
+	if frame ~= nil then
+		frame:Move(0, 0);
+		frame:SetOffset(_G["EXPERIENCE_VIEWER"]["settings"].xPosition, _G["EXPERIENCE_VIEWER"]["settings"].yPosition);
+	end
+end
+
+function EXPVIEWER_TOGGLE_FRAME()
+	ui.ToggleFrame("expviewer");
+end
+
+function EXPVIEWER_CONTEXT_MENU()
+	local skinList = {
+		"shadow_box",
+		"test_Item_tooltip_normal",
+		"systemmenu_vertical",
+		"chat_window",
+		"popup_rightclick",
+		"persoanl_shop_basicframe",
+		"tutorial_skin",
+		"slot_name",
+		"padslot_onskin",
+		"padslot_offskin2",
+		"monster_skill_bg",
+		"tab2_btn",
+		"fullblack_bg",
+		"testjoo_buttons", --clear
+		"test_skin_01_btn_cursoron",
+		"test_skin_01_btn_clicked",
+		"test_normal_button",
+		"frame_bg",
+		"textview",
+		"listbox",
+		"box_glass",
+		"tooltip1",
+		"textballoon",
+		"quest_box",
+		"guildquest_box",
+		"balloonskin_buy",
+		"barrack_creat_win",
+		"pip_simple_frame"
+	};
+
+	local context = ui.CreateContextMenu("EXPVIEWER_RBTN", "Experience Viewer", 0, 0, 300, 100);
+
+	ui.AddContextMenuItem(context, "Reset Session", "RESET()");
+	ui.AddContextMenuItem(context, "Save Settings", string.format("EXPVIEWER_SAVE_SETTINGS();"));
+	ui.AddContextMenuItem(context, "Hide (/expviewer)", string.format("EXPVIEWER_TOGGLE_FRAME();"));
+
+	local subContextToggle = ui.CreateContextMenu("SUBCONTEXT_TOGGLE", "", 0, 0, 0, 0);
+	ui.AddContextMenuItem(subContextToggle, "Current / Required", string.format("EXPVIEWER_TOGGLE_CURRENT();"));
+	ui.AddContextMenuItem(subContextToggle, "Current %", string.format("EXPVIEWER_TOGGLE_CURRENT_PERCENT();"));
+	ui.AddContextMenuItem(subContextToggle, "Last Gained", string.format("EXPVIEWER_TOGGLE_LAST_GAINED();"));
+	ui.AddContextMenuItem(subContextToggle, "TNL", string.format("EXPVIEWER_TOGGLE_TNL();"));
+	ui.AddContextMenuItem(subContextToggle, "Exp/Hr", string.format("EXPVIEWER_TOGGLE_EXPERIENCE_PER_HOUR();"));
+	ui.AddContextMenuItem(subContextToggle, "ETA", string.format("EXPVIEWER_TOGGLE_TIME_TIL_LEVEL();"));
+	ui.AddContextMenuItem(subContextToggle, "Cancel", "None");
+	ui.AddContextMenuItem(context, "Toggle {img white_right_arrow 18 18}", "", nil, 0, 1, subContextToggle);
+
+	local subContextSkin = ui.CreateContextMenu("SUBCONTEXT_SKIN", "", 0, 0, 0, 0);
+
+	for i=1,#skinList do
+		ui.AddContextMenuItem(subContextSkin, skinList[i], string.format("EXPVIEWER_CHANGE_SKIN('%s')", skinList[i]));
+	end
+
+	ui.AddContextMenuItem(context, "Skin {img white_right_arrow 18 18}", "", nil, 0, 1, subContextSkin);
+
+	subContextSkin:Resize(300, subContextSkin:GetHeight());
+	subContextToggle:Resize(300, subContextToggle:GetHeight());
+	context:Resize(300, context:GetHeight());
+
+	ui.OpenContextMenu(context);
+end
+
+function EXPVIEWER_CHANGE_SKIN(skin)
+	local frame = ui.GetFrame("expviewer");
+	frame:SetSkinName(skin);
+	_G["EXPERIENCE_VIEWER"]["settings"].skin = skin;
+	EXPVIEWER_SAVE_SETTINGS();
+end
+
+--cause I'm lazy...
+function EXPVIEWER_TOGGLE_CURRENT()
+	_G["EXPERIENCE_VIEWER"]["settings"].showCurrentRequiredExperience = not _G["EXPERIENCE_VIEWER"]["settings"].showCurrentRequiredExperience;
+	EXPVIEWER_SAVE_SETTINGS();
+
+	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+end
+
+function EXPVIEWER_TOGGLE_CURRENT_PERCENT()
+	_G["EXPERIENCE_VIEWER"]["settings"].showCurrentPercent = not _G["EXPERIENCE_VIEWER"]["settings"].showCurrentPercent;
+	EXPVIEWER_SAVE_SETTINGS();
+
+	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+end
+
+function EXPVIEWER_TOGGLE_LAST_GAINED()
+	_G["EXPERIENCE_VIEWER"]["settings"].showLastGainedExperience = not _G["EXPERIENCE_VIEWER"]["settings"].showLastGainedExperience;
+	EXPVIEWER_SAVE_SETTINGS();
+
+	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+end
+
+function EXPVIEWER_TOGGLE_TNL()
+	_G["EXPERIENCE_VIEWER"]["settings"].showKillsTilNextLevel = not _G["EXPERIENCE_VIEWER"]["settings"].showKillsTilNextLevel;
+	EXPVIEWER_SAVE_SETTINGS();
+
+	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+end
+
+function EXPVIEWER_TOGGLE_EXPERIENCE_PER_HOUR()
+	_G["EXPERIENCE_VIEWER"]["settings"].showExperiencePerHour = not _G["EXPERIENCE_VIEWER"]["settings"].showExperiencePerHour;
+	EXPVIEWER_SAVE_SETTINGS();
+
+	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+end
+
+function EXPVIEWER_TOGGLE_TIME_TIL_LEVEL()
+	_G["EXPERIENCE_VIEWER"]["settings"].showTimeTilLevel = not _G["EXPERIENCE_VIEWER"]["settings"].showTimeTilLevel;
+	EXPVIEWER_SAVE_SETTINGS();
+
+	UPDATE_UI("baseExperience", _G["EXPERIENCE_VIEWER"]["baseExperienceData"]);
+	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
+end
+
+function EXPVIEWER_SAVE_SETTINGS()
+	if _G["EXPERIENCE_VIEWER"]["settings"] == nil then
+		_G["EXPERIENCE_VIEWER"]["settings"] = {
+			xPosition = 0;
+			yPosition = 0;
+			showCurrentRequiredExperience = true;
+			showCurrentPercent = true;
+			showLastGainedExperience = true;
+			showKillsTilNextLevel = true;
+			showExperiencePerHour = true;
+			showTimeTilLevel = true;
+			skin = "shadow_box";
+		};
+	else
+		local frame = ui.GetFrame("expviewer");
+		_G["EXPERIENCE_VIEWER"]["settings"].xPosition = frame:GetX();
+		_G["EXPERIENCE_VIEWER"]["settings"].yPosition = frame:GetY();
+	end
+
+	acutil.saveJSON("../addons/expviewer/settings.json", _G["EXPERIENCE_VIEWER"]["settings"]);
+end
+
+function EXPVIEWER_LOAD_SETTINGS()
+	local settings, error = acutil.loadJSON("../addons/expviewer/settings.json");
+
+	if error then
+		EXPVIEWER_SAVE_SETTINGS();
+	else
+		_G["EXPERIENCE_VIEWER"]["settings"] = settings;
+	end
 end
 
 function EXPVIEWER_EXP_UPDATE(frame, msg, argStr, argNum)
@@ -351,7 +360,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s18}Current / Required",
-							settings.showCurrentRequiredExperience,
+							_G["EXPERIENCE_VIEWER"]["settings"].showCurrentRequiredExperience,
 							xPosition,
 							yPosition,
 							columnKey
@@ -361,7 +370,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s18}%",
-							settings.showCurrentPercent,
+							_G["EXPERIENCE_VIEWER"]["settings"].showCurrentPercent,
 							xPosition,
 							yPosition,
 							columnKey
@@ -371,7 +380,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s18}Gain",
-							settings.showLastGainedExperience,
+							_G["EXPERIENCE_VIEWER"]["settings"].showLastGainedExperience,
 							xPosition,
 							yPosition,
 							columnKey
@@ -381,7 +390,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s18}TNL",
-							settings.showKillsTilNextLevel,
+							_G["EXPERIENCE_VIEWER"]["settings"].showKillsTilNextLevel,
 							xPosition,
 							yPosition,
 							columnKey
@@ -391,7 +400,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s18}Exp/Hr",
-							settings.showExperiencePerHour,
+							_G["EXPERIENCE_VIEWER"]["settings"].showExperiencePerHour,
 							xPosition,
 							yPosition,
 							columnKey
@@ -401,7 +410,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s18}ETA",
-							settings.showTimeTilLevel,
+							_G["EXPERIENCE_VIEWER"]["settings"].showTimeTilLevel,
 							xPosition,
 							yPosition,
 							columnKey
@@ -425,7 +434,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s16}" .. GetCommaedText(experienceData.currentExperience) .." / " .. GetCommaedText(experienceData.requiredExperience),
-							settings.showCurrentRequiredExperience,
+							_G["EXPERIENCE_VIEWER"]["settings"].showCurrentRequiredExperience,
 							xPosition,
 							yPosition,
 							columnKey
@@ -435,7 +444,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s16}" .. string.format("%.2f", experienceData.currentPercent) .. "%",
-							settings.showCurrentPercent,
+							_G["EXPERIENCE_VIEWER"]["settings"].showCurrentPercent,
 							xPosition,
 							yPosition,
 							columnKey
@@ -445,7 +454,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s16}" .. GetCommaedText(experienceData.lastExperienceGain),
-							settings.showLastGainedExperience,
+							_G["EXPERIENCE_VIEWER"]["settings"].showLastGainedExperience,
 							xPosition,
 							yPosition,
 							columnKey
@@ -455,7 +464,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s16}" .. GetCommaedText(experienceData.killsTilNextLevel),
-							settings.showKillsTilNextLevel,
+							_G["EXPERIENCE_VIEWER"]["settings"].showKillsTilNextLevel,
 							xPosition,
 							yPosition,
 							columnKey
@@ -465,7 +474,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s16}" .. GetCommaedText(string.format("%i", experienceData.experiencePerHour)),
-							settings.showExperiencePerHour,
+							_G["EXPERIENCE_VIEWER"]["settings"].showExperiencePerHour,
 							xPosition,
 							yPosition,
 							columnKey
@@ -475,7 +484,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s16}" .. experienceData.timeTilLevel,
-							settings.showTimeTilLevel,
+							_G["EXPERIENCE_VIEWER"]["settings"].showTimeTilLevel,
 							xPosition,
 							yPosition,
 							columnKey
@@ -499,7 +508,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s16}" .. GetCommaedText(experienceData.currentExperience) .." / " .. GetCommaedText(experienceData.requiredExperience),
-							settings.showCurrentRequiredExperience,
+							_G["EXPERIENCE_VIEWER"]["settings"].showCurrentRequiredExperience,
 							xPosition,
 							yPosition,
 							columnKey
@@ -509,7 +518,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s16}" .. string.format("%.2f", experienceData.currentPercent) .. "%",
-							settings.showCurrentPercent,
+							_G["EXPERIENCE_VIEWER"]["settings"].showCurrentPercent,
 							xPosition,
 							yPosition,
 							columnKey
@@ -519,7 +528,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s16}" .. GetCommaedText(experienceData.lastExperienceGain),
-							settings.showLastGainedExperience,
+							_G["EXPERIENCE_VIEWER"]["settings"].showLastGainedExperience,
 							xPosition,
 							yPosition,
 							columnKey
@@ -529,7 +538,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s16}" .. GetCommaedText(experienceData.killsTilNextLevel),
-							settings.showKillsTilNextLevel,
+							_G["EXPERIENCE_VIEWER"]["settings"].showKillsTilNextLevel,
 							xPosition,
 							yPosition,
 							columnKey
@@ -539,7 +548,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s16}" .. GetCommaedText(string.format("%i", experienceData.experiencePerHour)),
-							settings.showExperiencePerHour,
+							_G["EXPERIENCE_VIEWER"]["settings"].showExperiencePerHour,
 							xPosition,
 							yPosition,
 							columnKey
@@ -549,7 +558,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 							i,
 							richText,
 							"{@st41}{s16}" .. experienceData.timeTilLevel,
-							settings.showTimeTilLevel,
+							_G["EXPERIENCE_VIEWER"]["settings"].showTimeTilLevel,
 							xPosition,
 							yPosition,
 							columnKey
@@ -625,10 +634,6 @@ function UPDATE_BUTTONS(expFrame)
 	end
 end
 
-function PRINT_EXPERIENCE_DATA(experienceData)
-	ui.SysMsg(experienceData.currentExperience .. " / " .. experienceData.requiredExperience .. "   " .. experienceData.lastExperienceGain .. " gained   " .. experienceData.currentPercent .. "%" .. "   " .. experienceData.killsTilNextLevel .. " tnl   " .. experienceData.experiencePerHour .. " exp/hr");
-end
-
 function RESET()
 	ui.SysMsg("Resetting experience session!");
 
@@ -637,30 +642,5 @@ function RESET()
 	_G["EXPERIENCE_VIEWER"]["baseExperienceData"]:reset();
 	_G["EXPERIENCE_VIEWER"]["classExperienceData"]:reset();
 
-	SET_WINDOW_POSITION_GLOBAL();
-end
-
-function LOAD_POSITION_FROM_FILE()
-	local file, error = io.open("../addons/expviewer/settings.txt", "r");
-
-	if error then
-		return;
-	end
-
-	_G["EXPERIENCE_VIEWER"]["POSITION_X"] = file:read();
-	_G["EXPERIENCE_VIEWER"]["POSITION_Y"] = file:read();
-
-	MOVE_WINDOW_TO_STORED_POSITION();
-end
-
-function SAVE_POSITION_TO_FILE(xPosition, yPosition)
-	local file, error = io.open("../addons/expviewer/settings.txt", "w");
-
-	if error then
-		return;
-	end
-
-	file:write(xPosition .. "\n" .. yPosition);
-	file:flush();
-	file:close();
+	EXPVIEWER_SAVE_SETTINGS();
 end
