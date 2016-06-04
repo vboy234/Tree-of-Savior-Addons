@@ -44,8 +44,8 @@
 		"name" : "Experience Card Calculator",
 		"file" : "expcardcalculator",
 		"extension" : "ipf",
-		"releaseTag" : "brandish",
-		"fileVersion" : "v1.0.0",
+		"releaseTag" : "toyhammer",
+		"fileVersion" : "v1.0.1",
 		"unicode" : "⛄",
 		"description" : "Automatically calculates your card level based on the experience cards you have in your inventory.",
 		"tags" : [
