@@ -57,7 +57,7 @@
 		"name" : "Experience Viewer",
 		"file" : "expviewer",
 		"extension" : "ipf",
-		"fileVersion" : "v1.1.0",
+		"fileVersion" : "v1.1.1",
 		"releaseTag" : "toyhammer",
 		"unicode" : "⛄",
 		"description" : "Displays various experience values such as current experience, required experience, current percent, experience gained on last kill, kills til next level, experience per hour, and estimated time until level up.",
