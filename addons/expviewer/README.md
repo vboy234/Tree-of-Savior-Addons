@@ -2,7 +2,7 @@
 
 Experience Viewer displays all sorts of information about your character's experience.
 
-![Experience Viewer](http://i.imgur.com/lzwJN9f.png)
+![Experience Viewer](http://i.imgur.com/pddYxcZ.png)
 
 * Current / Required experience
 * Current percent
