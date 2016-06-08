@@ -1,5 +1,3 @@
-# Experience Viewer
-
 Experience Viewer displays all sorts of information about your character's experience.
 
 ![Experience Viewer](http://i.imgur.com/pddYxcZ.png)
