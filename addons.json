@@ -147,10 +147,10 @@
 		"name" : "Played",
 		"file" : "played",
 		"extension" : "ipf",
-		"releaseTag" : "elements",
-		"fileVersion" : "v1.0.0",
+		"releaseTag" : "gladius",
+		"fileVersion" : "v1.0.1",
 		"unicode" : "⛄",
-		"description" : "Displays time played when you enter /played.",
+		"description" : "Displays time played when you enter /timeplayed.",
 		"tags" : [
 			"played",
 			"time"
