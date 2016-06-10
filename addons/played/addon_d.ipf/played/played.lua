@@ -8,18 +8,19 @@ function PLAYED()
 
 	local totalJobGrade = session.GetPcTotalJobGrade()
 	for i = 1, totalJobGrade do
-		local index = i;
-		local mainSession = session.GetMainSession();
-		local jobHistorySession = mainSession.jobHistory;
-		local jobHistory = jobHistorySession:GetJobHistory(index-1);
-		local jobInfoClass = GetClassByType('Job', jobHistory.jobID);
-		local jobName = jobInfoClass.Name;
-		local startTime = jobHistorySession:GetJobHistoryStartTime_Systime(index-1);
-		local currentJobPlayTime = jobHistory.playSecond;
+		if i ~= totalJobGrade then
+			local mainSession = session.GetMainSession();
+			local jobHistorySession = mainSession.jobHistory;
+			local jobHistory = jobHistorySession:GetJobHistory(i-1);
+			local jobInfoClass = GetClassByType('Job', jobHistory.jobID);
+			local jobName = jobInfoClass.Name;
+			local startTime = jobHistorySession:GetJobHistoryStartTime_Systime(i-1);
+			local currentJobPlayTime = jobHistory.playSecond;
 
-		totalPlayTime = totalPlayTime + currentJobPlayTime;
+			totalPlayTime = totalPlayTime + currentJobPlayTime;
 
-		CHAT_SYSTEM("{@st43}" .. jobName .. ": " ..GET_TIME_TXT(currentJobPlayTime) .. "{/}");
+			CHAT_SYSTEM("{@st43}" .. jobName .. ": " ..GET_TIME_TXT(currentJobPlayTime) .. "{/}");
+		end
 	end
 
 	totalPlayTime = totalPlayTime + GetMyPCObject().PlayTime;
