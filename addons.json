@@ -144,6 +144,19 @@
 		]
 	},
 	{
+		"name" : "Played",
+		"file" : "played",
+		"extension" : "ipf",
+		"releaseTag" : "elements",
+		"fileVersion" : "v1.0.0",
+		"unicode" : "⛄",
+		"description" : "Displays time played when you enter /played.",
+		"tags" : [
+			"played",
+			"time"
+		]
+	},
+	{
 		"name" : "Show Invested Stat Points",
 		"file" : "showinvestedstatpoints",
 		"extension" : "ipf",
