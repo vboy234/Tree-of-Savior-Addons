@@ -1,7 +1,6 @@
-local acutil = require("acutil");
-
 function PLAYED_ON_INIT(addon, frame)
-	acutil.slashCommand("/played", PLAYED);
+	local acutil = require("acutil");
+	acutil.slashCommand("/timeplayed", PLAYED);
 end
 
 function PLAYED()
