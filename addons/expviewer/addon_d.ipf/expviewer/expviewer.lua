@@ -58,6 +58,10 @@ local acutil = require("acutil");
 function EXPVIEWER_ON_INIT(addon, frame)
 	EXPVIEWER_LOAD_SETTINGS();
 
+	_G["EXPERIENCE_VIEWER"].isDragging = false;
+	frame:SetEventScript(ui.LBUTTONDOWN, "EXPVIEWER_START_DRAG");
+	frame:SetEventScript(ui.LBUTTONUP, "EXPVIEWER_END_DRAG");
+
 	acutil.slashCommand("/expviewer", EXPVIEWER_TOGGLE_FRAME);
 
 	frame:EnableHitTest(1);
@@ -73,7 +77,7 @@ function EXPVIEWER_ON_INIT(addon, frame)
 	else
 		frame:ShowWindow(0);
 	end
-	
+
 	MOVE_FRAME_TO_SAVED_POSITION();
 	frame:SetSkinName(_G["EXPERIENCE_VIEWER"]["settings"].skin);
 
@@ -83,10 +87,19 @@ function EXPVIEWER_ON_INIT(addon, frame)
 	UPDATE_UI("classExperience", _G["EXPERIENCE_VIEWER"]["classExperienceData"]);
 end
 
+function EXPVIEWER_START_DRAG()
+	_G["EXPERIENCE_VIEWER"].isDragging = true;
+end
+
+function EXPVIEWER_END_DRAG()
+	EXPVIEWER_SAVE_SETTINGS();
+	_G["EXPERIENCE_VIEWER"].isDragging = false;
+end
+
 function MOVE_FRAME_TO_SAVED_POSITION()
 	local frame = ui.GetFrame("expviewer");
 
-	if frame ~= nil then
+	if frame ~= nil and not _G["EXPERIENCE_VIEWER"].isDragging then
 		frame:Move(0, 0);
 		frame:SetOffset(_G["EXPERIENCE_VIEWER"]["settings"].xPosition, _G["EXPERIENCE_VIEWER"]["settings"].yPosition);
 	end
@@ -577,6 +590,7 @@ function UPDATE_UI(experienceTextName, experienceData)
 
 			local size = CALCULATE_FRAME_SIZE() + 20; --extra 20 for reset button
 			expFrame:Resize(size, 108);
+			MOVE_FRAME_TO_SAVED_POSITION();
 		end
 	end
 end
