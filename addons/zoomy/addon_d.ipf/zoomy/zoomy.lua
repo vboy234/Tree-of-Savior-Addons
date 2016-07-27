@@ -7,7 +7,7 @@ local ZOOM_AMOUNT = 30;
 local MINIMUM_ZOOM = 50;
 local MAXIMUM_ZOOM = 1500;
 
-local currentZoom = 100;
+local currentZoom = 50;
 
 function ZOOMY_IN()
 	currentZoom = currentZoom - ZOOM_AMOUNT;
